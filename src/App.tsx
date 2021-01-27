@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import NavBar, { SiteMapping } from "./components/NavBar";
 import Home from "./pages/Home";
+import Tutorial from "./pages/Tutorial";
 
 export const siteMap: SiteMapping[] = [
   {
@@ -22,6 +23,9 @@ export default function App() {
         <Router>
           <Route exact path="/">
             <Home />
+          </Route>
+          <Route exact path="/tutorial">
+            <Tutorial />
           </Route>
         </Router>
       </div>
