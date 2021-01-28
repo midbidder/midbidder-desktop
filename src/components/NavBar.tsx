@@ -31,7 +31,9 @@ export default function NavBar(props: NavBarProps) {
             <Nav.Link href={tabSetting.route}>{tabSetting.title}</Nav.Link>
           ))}
           <NavDropdown title="profile" id="basic-nav-dropdown">
-            <NavDropdown.Item>settings</NavDropdown.Item>
+            <NavDropdown.Item href="/settings">
+              <Nav.Link>settings</Nav.Link>
+            </NavDropdown.Item>
 
             <NavDropdown.Divider />
             <NavDropdown.Item onClick={() => {

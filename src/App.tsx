@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import NavBar, { SiteMapping } from "./components/NavBar";
 import Home from "./pages/Home";
+import Settings from "./pages/Settings";
 import Tutorial from "./pages/Tutorial";
 import {
   AuthContext,
@@ -51,6 +52,9 @@ export default function App() {
                 {value.component}
               </Route>
             ))}
+            <Route exact path="/settings">
+              <Settings />
+            </Route>
           </Router>
         </div>
       </AuthContext.Provider>
