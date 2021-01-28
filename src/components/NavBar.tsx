@@ -1,11 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { AuthContext } from "../contexts/AuthContext";
+
 export interface SiteMapping {
   title: string;
   route: string;
-  component: any;
-  exact?: boolean;
 }
 
 export interface NavBarProps {
@@ -14,7 +12,6 @@ export interface NavBarProps {
 }
 
 export default function NavBar(props: NavBarProps) {
-  const auth = useContext(AuthContext);
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand href="/">{props.title}</Navbar.Brand>
@@ -24,26 +21,22 @@ export default function NavBar(props: NavBarProps) {
           style={{
             display: "flex",
             width: "100%",
-            justifyContent: "flex-end",
+            justifyContent: "flex-end"
           }}
         >
           {props.siteMap.map((tabSetting: SiteMapping) => (
-            <Nav.Link href={tabSetting.route}>{tabSetting.title}</Nav.Link>
+            <Nav.Link href={tabSetting.route}>
+              {tabSetting.title}
+            </Nav.Link>
           ))}
-          <NavDropdown title="profile" id="basic-nav-dropdown">
+          <NavDropdown
+            title="profile"
+            id="basic-nav-dropdown"
+          >
             <NavDropdown.Item>settings</NavDropdown.Item>
 
             <NavDropdown.Divider />
-            <NavDropdown.Item onClick={() => {
-              console.log(auth);
-              if(auth.signedIn && auth.signOut) {
-                auth.signOut();
-              } else if (!auth.signedIn && auth.signIn) {
-                auth.signIn();
-              }
-            }}>
-              {auth.signedIn ? "sign out" : "sign in"}
-            </NavDropdown.Item>
+            <NavDropdown.Item>sign out</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Navbar.Collapse>
