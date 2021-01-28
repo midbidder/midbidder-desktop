@@ -33,7 +33,7 @@ export default function NavBar(props: NavBarProps) {
             title="profile"
             id="basic-nav-dropdown"
           >
-            <NavDropdown.Item>settings</NavDropdown.Item>
+            <Nav.Link href={"/settings"}>settings</Nav.Link>
 
             <NavDropdown.Divider />
             <NavDropdown.Item>sign out</NavDropdown.Item>
