@@ -21,19 +21,16 @@ export default function NavBar(props: NavBarProps) {
           style={{
             display: "flex",
             width: "100%",
-            justifyContent: "flex-end"
+            justifyContent: "flex-end",
           }}
         >
           {props.siteMap.map((tabSetting: SiteMapping) => (
-            <Nav.Link href={tabSetting.route}>
-              {tabSetting.title}
-            </Nav.Link>
+            <Nav.Link href={tabSetting.route}>{tabSetting.title}</Nav.Link>
           ))}
-          <NavDropdown
-            title="profile"
-            id="basic-nav-dropdown"
-          >
-            <Nav.Link href={"/settings"}>settings</Nav.Link>
+          <NavDropdown title="profile" id="basic-nav-dropdown">
+            <NavDropdown.Item>
+              <Nav.Link href={"/settings"}>settings</Nav.Link>
+            </NavDropdown.Item>
 
             <NavDropdown.Divider />
             <NavDropdown.Item>sign out</NavDropdown.Item>
