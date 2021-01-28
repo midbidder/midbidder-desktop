@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-
+import { AuthContext } from "../contexts/AuthContext"
 export interface SiteMapping {
   title: string;
   route: string;
@@ -14,6 +14,7 @@ export interface NavBarProps {
 }
 
 export default function NavBar(props: NavBarProps) {
+  const auth = useContext(AuthContext);
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand href="/">{props.title}</Navbar.Brand>
@@ -38,7 +39,7 @@ export default function NavBar(props: NavBarProps) {
             <NavDropdown.Item>settings</NavDropdown.Item>
 
             <NavDropdown.Divider />
-            <NavDropdown.Item>sign out</NavDropdown.Item>
+            <NavDropdown.Item>{auth.signedIn ? "sign out" : "sign in"}</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Navbar.Collapse>
