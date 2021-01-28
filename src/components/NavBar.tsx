@@ -4,6 +4,8 @@ import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 export interface SiteMapping {
   title: string;
   route: string;
+  component: any;
+  exact?: boolean;
 }
 
 export interface NavBarProps {

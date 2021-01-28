@@ -8,10 +8,13 @@ export const siteMap: SiteMapping[] = [
   {
     title: "home",
     route: "/",
+    component: <Home />,
+    exact: true,
   },
   {
     title: "tutorial",
     route: "/tutorial",
+    component: <Tutorial />,
   },
 ];
 
@@ -21,12 +24,11 @@ export default function App() {
       <NavBar title={"midbidder"} siteMap={siteMap} />
       <div>
         <Router>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route exact path="/tutorial">
-            <Tutorial />
-          </Route>
+          {siteMap.map((value: SiteMapping) => (
+            <Route exact={value.exact} path={value.route}>
+              {value.component}
+            </Route>
+          ))}
         </Router>
       </div>
     </div>
