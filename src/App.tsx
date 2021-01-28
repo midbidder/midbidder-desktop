@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import NavBar, { SiteMapping } from "./components/NavBar";
 import Home from "./pages/Home";
 import Tutorial from "./pages/Tutorial";
-import { AuthContext, DefaultAuthContext } from "./contexts/AuthContext";
+import {
+  AuthContext,
+  AuthContextSignedIn,
+  AuthContextSignedOut,
+  AuthSchema,
+} from "./contexts/AuthContext";
 
 export const siteMap: SiteMapping[] = [
   {
@@ -20,9 +25,24 @@ export const siteMap: SiteMapping[] = [
 ];
 
 export default function App() {
+  const [authState, setAuthState] = useState(AuthContextSignedOut);
+  const authSignOut = () => {
+    setAuthState(AuthContextSignedOut);
+  };
+  const authSignIn = () => {
+    setAuthState(AuthContextSignedIn);
+  };
+  if (!authState.signOut) {
+    const defaultAuthState: AuthSchema = {
+      signedIn: authState.signedIn,
+      signOut: authSignOut,
+      signIn: authSignIn,
+    };
+    setAuthState(defaultAuthState);
+  }
   return (
     <div>
-      <AuthContext.Provider value={DefaultAuthContext}>
+      <AuthContext.Provider value={authState}>
         <NavBar title={"midbidder"} siteMap={siteMap} />
         <div>
           <Router>

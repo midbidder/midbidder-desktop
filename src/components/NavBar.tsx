@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { AuthContext } from "../contexts/AuthContext"
+import { AuthContext } from "../contexts/AuthContext";
 export interface SiteMapping {
   title: string;
   route: string;
@@ -24,22 +24,26 @@ export default function NavBar(props: NavBarProps) {
           style={{
             display: "flex",
             width: "100%",
-            justifyContent: "flex-end"
+            justifyContent: "flex-end",
           }}
         >
           {props.siteMap.map((tabSetting: SiteMapping) => (
-            <Nav.Link href={tabSetting.route}>
-              {tabSetting.title}
-            </Nav.Link>
+            <Nav.Link href={tabSetting.route}>{tabSetting.title}</Nav.Link>
           ))}
-          <NavDropdown
-            title="profile"
-            id="basic-nav-dropdown"
-          >
+          <NavDropdown title="profile" id="basic-nav-dropdown">
             <NavDropdown.Item>settings</NavDropdown.Item>
 
             <NavDropdown.Divider />
-            <NavDropdown.Item>{auth.signedIn ? "sign out" : "sign in"}</NavDropdown.Item>
+            <NavDropdown.Item onClick={() => {
+              console.log(auth);
+              if(auth.signedIn && auth.signOut) {
+                auth.signOut();
+              } else if (!auth.signedIn && auth.signIn) {
+                auth.signIn();
+              }
+            }}>
+              {auth.signedIn ? "sign out" : "sign in"}
+            </NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Navbar.Collapse>
