@@ -6,6 +6,7 @@ export interface SiteMapping {
   route: string;
   component: any;
   exact?: boolean;
+  tab?: boolean;
 }
 
 export interface NavBarProps {
@@ -36,15 +37,20 @@ export default function NavBar(props: NavBarProps) {
             </NavDropdown.Item>
 
             <NavDropdown.Divider />
-            <NavDropdown.Item onClick={() => {
-              console.log(auth);
-              if(auth.signedIn && auth.signOut) {
-                auth.signOut();
-              } else if (!auth.signedIn && auth.signIn) {
-                auth.signIn();
-              }
-            }}>
-              {auth.signedIn ? "sign out" : "sign in"}
+            <NavDropdown.Item
+              onClick={() => {
+                console.log(auth);
+                if (auth.signedIn && auth.signOut) {
+                  auth.signOut();
+                } else if (!auth.signedIn && auth.signIn) {
+                  auth.signIn();
+                }
+              }}
+              href="/signin"
+            >
+              <Nav.Link href="/signin">
+                {auth.signedIn ? "sign out" : "sign in"}
+              </Nav.Link>
             </NavDropdown.Item>
           </NavDropdown>
         </Nav>
