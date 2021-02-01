@@ -39,7 +39,6 @@ export default function NavBar(props: NavBarProps) {
             <NavDropdown.Divider />
             <NavDropdown.Item
               onClick={() => {
-                console.log(auth);
                 if (auth.signedIn && auth.signOut) {
                   auth.signOut();
                 } else if (!auth.signedIn && auth.signIn) {

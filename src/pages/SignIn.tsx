@@ -8,11 +8,11 @@ import { keyInObject } from "../util/TypeComparison";
 
 export default function SignIn() {
   const successCallback = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-    const tokenId = keyInObject['tokenId'] ? (response as GoogleLoginResponse).tokenId : undefined;
+    const tokenId = keyInObject('tokenId', response) ? (response as GoogleLoginResponse).tokenId : undefined;
     console.log(tokenId);
   };
   const failureCallback = (response: GoogleLoginResponse) => {
-    console.log(response);
+    console.log('c--------------');
   };
   return (
     <div>
@@ -24,7 +24,7 @@ export default function SignIn() {
           onFailure={failureCallback}
           buttonText="login with google"
           cookiePolicy={"single_host_origin"}
-          clientId={process.env.GOOGLE_AUTH_CLIENT_ID!}
+          clientId={process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID!}
         />
       </div>
     </div>
