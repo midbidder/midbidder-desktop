@@ -18,7 +18,7 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
     const tokenId = keyInObject("tokenId", response)
       ? (response as GoogleLoginResponse).tokenId
       : undefined;
-    console.log(tokenId);
+    // TODO: database stuff here. Check if account exists. If not, create account.
   };
   const failureCallback = (response: GoogleLoginResponse) => {
     console.log("c--------------");
@@ -78,7 +78,7 @@ export default function SignIn() {
           </u>{" "}
           sign up for free.
         </div>
-        <SignInButton signUp={true}/>
+        <SignInButton signUp={true} />
       </div>
     </div>
   );
