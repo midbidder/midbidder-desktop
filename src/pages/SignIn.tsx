@@ -57,7 +57,33 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
   );
 }
 
-export default function SignIn() {
+export function SignIn() {
+  return (
+    <div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ height: 100 }} />
+        <h3>welcome back.</h3>
+        <h1>sign in</h1>
+        <SignInButton />
+        <div style={{ height: 100 }} />
+        <div>
+          <u>
+            <i>don't have an account?</i>
+          </u>
+        </div>
+        <div><a href="/signup">sign up for free.</a></div>
+      </div>
+    </div>
+  );
+}
+
+export function SignUp() {
   return (
     <div>
       <div
@@ -69,16 +95,15 @@ export default function SignIn() {
       >
         <div style={{ height: 100 }} />
         <h3>join the action.</h3>
-        <h1>sign in / up</h1>
-        <SignInButton />
+        <h1>sign up</h1>
+        <SignInButton signUp={true} />
         <div style={{ height: 100 }} />
         <div>
           <u>
-            <i>don't have an account?</i>
-          </u>{" "}
-          sign up for free.
+            <i>already have an account?</i>
+          </u>
         </div>
-        <SignInButton signUp={true} />
+        <div><a href="/signin">sign in for free.</a></div>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import NavBar, { SiteMapping } from "./components/NavBar";
 import Home from "./pages/Home";
 import Settings from "./pages/Settings";
 import Tutorial from "./pages/Tutorial";
-import SignIn from "./pages/SignIn";
+import { SignIn, SignUp } from "./pages/SignIn";
 import {
   AuthContext,
   AuthContextSignedIn,
@@ -58,6 +58,9 @@ export default function App() {
             </Route>
             <Route exact path="/signin">
               <SignIn />
+            </Route>
+            <Route exact path="/signup">
+              <SignUp />
             </Route>
           </Router>
         </div>
