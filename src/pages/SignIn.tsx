@@ -4,16 +4,14 @@ import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
+import { keyInObject } from "../util/TypeComparison";
 
 export default function SignIn() {
-  const successCallback = (
-    response: GoogleLoginResponse | GoogleLoginResponseOffline
-  ) => {
-      console.log(response);
+  const successCallback = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+    const tokenId = keyInObject['tokenId'] ? (response as GoogleLoginResponse).tokenId : undefined;
+    console.log(tokenId);
   };
-  const failureCallback = (
-    response: GoogleLoginResponse | GoogleLoginResponseOffline
-  ) => {
+  const failureCallback = (response: GoogleLoginResponse) => {
     console.log(response);
   };
   return (
