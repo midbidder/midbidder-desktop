@@ -37,19 +37,11 @@ export default function NavBar(props: NavBarProps) {
             </NavDropdown.Item>
 
             <NavDropdown.Divider />
-            <NavDropdown.Item
-              onClick={() => {
-                if (auth.signedIn && auth.signOut) {
-                  auth.signOut();
-                } else if (!auth.signedIn && auth.signIn) {
-                  auth.signIn();
-                }
-              }}
-              href="/signin"
-            >
-              <Nav.Link href="/signin">
-                {auth.signedIn ? "sign out" : "sign in"}
-              </Nav.Link>
+            <NavDropdown.Item href="/signin">
+              sign in
+            </NavDropdown.Item>
+            <NavDropdown.Item href="/signup">
+              sign up
             </NavDropdown.Item>
           </NavDropdown>
         </Nav>
