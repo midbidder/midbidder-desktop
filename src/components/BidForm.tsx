@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Button, InputGroup, FormControl, Form } from "react-bootstrap";
+import {
+  Button,
+  InputGroup,
+  FormControl,
+  Form,
+  OverlayTrigger,
+  Popover,
+  DropdownButton,
+  Dropdown,
+  ButtonGroup,
+} from "react-bootstrap";
 
 const unitLength = "3em";
 
@@ -12,14 +22,23 @@ interface BidButtonProps {
   sign: "+" | "-";
 }
 
+const sliderMaxSettings = [10, 100, 1000, 10000];
+
 function BidSlider(props: BidChildrenProps) {
+  const [sliderMax, setSliderMax] = useState(1);
+  const [showMaxOverlay, setShowMaxOverlay] = useState(false);
   return (
     <div>
       <div>
-        <Form.Control type="range" value={props.bidValue} onChange={event => {
-            const newBidValue = parseInt(event.target.value);
-            props.setBidValue(newBidValue)
-        }} />
+        <Form.Control
+          type="range"
+          value={(100 * props.bidValue) / sliderMaxSettings[sliderMax]}
+          onChange={(event) => {
+            const percent = parseInt(event.target.value);
+            const newBidValue = (sliderMaxSettings[sliderMax] * percent) / 100;
+            props.setBidValue(newBidValue);
+          }}
+        />
       </div>
       <div
         style={{
@@ -29,7 +48,50 @@ function BidSlider(props: BidChildrenProps) {
         }}
       >
         <span style={{ width: unitLength }}>0</span>
-        <span style={{ width: unitLength }}>100</span>
+        <span
+          style={{ width: unitLength }}
+          onMouseOver={() => {
+            setShowMaxOverlay(true);
+          }}
+        >
+          <OverlayTrigger
+            trigger="click"
+            show={showMaxOverlay}
+            overlay={
+              <Popover id="popover-basic">
+                <Popover.Title as="h5">set max</Popover.Title>
+                <Popover.Content>
+                  <div
+                    style={{ textAlign: "center", cursor: "pointer" }}
+                    onMouseDown={() => setShowMaxOverlay(false)}
+                  >
+                    <u>
+                      <i>close</i>
+                    </u>
+                  </div>
+                  <DropdownButton
+                    as={ButtonGroup}
+                    title={sliderMaxSettings[sliderMax]}
+                    id="bg-vertical-dropdown-1"
+                  >
+                    {sliderMaxSettings.map((value: number, index: number) => (
+                      <Dropdown.Item
+                        onMouseDown={() => {
+                          setSliderMax(index);
+                          setShowMaxOverlay(false);
+                        }}
+                      >
+                        {value}
+                      </Dropdown.Item>
+                    ))}
+                  </DropdownButton>
+                </Popover.Content>
+              </Popover>
+            }
+          >
+            <u>{sliderMaxSettings[sliderMax]}</u>
+          </OverlayTrigger>
+        </span>
       </div>
     </div>
   );
@@ -106,7 +168,9 @@ export default function BidForm() {
           alignItems: "center",
         }}
       >
-          <h5><u>bid volume</u></h5>
+        <h5>
+          <u>bid volume</u>
+        </h5>
         <div
           style={{
             display: "flex",
