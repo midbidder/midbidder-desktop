@@ -32,7 +32,11 @@ function BidSlider(props: BidChildrenProps) {
       <div>
         <Form.Control
           type="range"
-          value={(100 * props.bidValue) / sliderMaxSettings[sliderMax]}
+          value={
+            isNaN(props.bidValue)
+              ? 0
+              : (100 * props.bidValue) / sliderMaxSettings[sliderMax]
+          }
           onChange={(event) => {
             const percent = parseInt(event.target.value);
             const newBidValue = (sliderMaxSettings[sliderMax] * percent) / 100;
@@ -53,22 +57,18 @@ function BidSlider(props: BidChildrenProps) {
           onMouseOver={() => {
             setShowMaxOverlay(true);
           }}
+          onMouseOut={() => setShowMaxOverlay(false)}
         >
           <OverlayTrigger
             trigger="click"
             show={showMaxOverlay}
             overlay={
-              <Popover id="popover-basic">
+              <Popover
+                id="popover-basic"
+                onMouseOut={() => setShowMaxOverlay(false)}
+              >
                 <Popover.Title as="h5">set max</Popover.Title>
                 <Popover.Content>
-                  <div
-                    style={{ textAlign: "center", cursor: "pointer" }}
-                    onMouseDown={() => setShowMaxOverlay(false)}
-                  >
-                    <u>
-                      <i>close</i>
-                    </u>
-                  </div>
                   <DropdownButton
                     as={ButtonGroup}
                     title={sliderMaxSettings[sliderMax]}
