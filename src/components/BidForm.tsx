@@ -79,6 +79,8 @@ function BidSlider(props: BidChildrenProps) {
                         onMouseDown={() => {
                           setSliderMax(index);
                           setShowMaxOverlay(false);
+                          if (props.bidValue > sliderMaxSettings[index])
+                            props.setBidValue(sliderMaxSettings[index]);
                         }}
                       >
                         {value}
