@@ -6,7 +6,7 @@ export interface SiteMapping {
   route: string;
   component: any;
   exact?: boolean;
-  tab?: boolean;
+  tab: boolean;
 }
 
 export interface NavBarProps {
@@ -28,9 +28,11 @@ export default function NavBar(props: NavBarProps) {
             justifyContent: "flex-end",
           }}
         >
-          {props.siteMap.map((tabSetting: SiteMapping) => (
-            <Nav.Link href={tabSetting.route}>{tabSetting.title}</Nav.Link>
-          ))}
+          {props.siteMap
+            .filter((tabSetting: SiteMapping) => tabSetting.tab)
+            .map((tabSetting: SiteMapping) => (
+              <Nav.Link href={tabSetting.route}>{tabSetting.title}</Nav.Link>
+            ))}
           <NavDropdown title="profile" id="basic-nav-dropdown">
             <NavDropdown.Item href="/settings">
               <Nav.Link href="/settings">settings</Nav.Link>
