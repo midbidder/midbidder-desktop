@@ -159,7 +159,7 @@ function BidButton(props: BidChildrenProps & BidButtonProps) {
   );
 }
 
-export default function BidForm() {
+export default function BidQuantityForm() {
   const [bidValue, setBidValue] = useState(0);
   return (
     <div>

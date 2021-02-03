@@ -1,10 +1,10 @@
 import React from "react";
-import BidForm from "../components/BidForm";
+import BidQuantityForm from "../components/BidQuantityForm";
 
 export default function Play() {
   return (
     <div>
-      <BidForm />
+      <BidQuantityForm />
     </div>
   );
 }
