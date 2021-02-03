@@ -6,6 +6,7 @@ export interface SiteMapping {
   route: string;
   component: any;
   exact?: boolean;
+  tab: boolean;
 }
 
 export interface NavBarProps {
@@ -27,24 +28,22 @@ export default function NavBar(props: NavBarProps) {
             justifyContent: "flex-end",
           }}
         >
-          {props.siteMap.map((tabSetting: SiteMapping) => (
-            <Nav.Link href={tabSetting.route}>{tabSetting.title}</Nav.Link>
-          ))}
+          {props.siteMap
+            .filter((tabSetting: SiteMapping) => tabSetting.tab)
+            .map((tabSetting: SiteMapping) => (
+              <Nav.Link href={tabSetting.route}>{tabSetting.title}</Nav.Link>
+            ))}
           <NavDropdown title="profile" id="basic-nav-dropdown">
             <NavDropdown.Item href="/settings">
               <Nav.Link href="/settings">settings</Nav.Link>
             </NavDropdown.Item>
 
             <NavDropdown.Divider />
-            <NavDropdown.Item onClick={() => {
-              console.log(auth);
-              if(auth.signedIn && auth.signOut) {
-                auth.signOut();
-              } else if (!auth.signedIn && auth.signIn) {
-                auth.signIn();
-              }
-            }}>
-              {auth.signedIn ? "sign out" : "sign in"}
+            <NavDropdown.Item href="/signin">
+              sign in
+            </NavDropdown.Item>
+            <NavDropdown.Item href="/signup">
+              sign up
             </NavDropdown.Item>
           </NavDropdown>
         </Nav>
