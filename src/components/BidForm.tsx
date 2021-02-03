@@ -171,7 +171,7 @@ export default function BidForm() {
         }}
       >
         <h5>
-          <u>bid volume</u>
+          <u>select bid quantity</u>
         </h5>
         <div
           style={{
