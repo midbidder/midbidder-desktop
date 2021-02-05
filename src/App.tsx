@@ -11,6 +11,7 @@ import {
   AuthContextSignedOut,
   AuthSchema,
 } from "./contexts/AuthContext";
+import Play from "./pages/Play";
 
 export const siteMap: SiteMapping[] = [
   {
@@ -18,11 +19,37 @@ export const siteMap: SiteMapping[] = [
     route: "/",
     component: <Home />,
     exact: true,
+    tab: true,
   },
   {
     title: "tutorial",
     route: "/tutorial",
     component: <Tutorial />,
+    tab: true,
+  },
+  {
+    title: "settings",
+    route: "/settings",
+    component: <Settings />,
+    tab: false,
+  },
+  {
+    title: "play",
+    route: "/play",
+    component: <Play />,
+    tab: false,
+  },
+  {
+    title: "signin",
+    route: "/signin",
+    component: <SignIn/>,
+    tab: false,
+  },
+  {
+    title: "signup",
+    route: "/signup",
+    component: <SignUp/>,
+    tab: false,
   },
 ];
 
@@ -53,15 +80,6 @@ export default function App() {
                 {value.component}
               </Route>
             ))}
-            <Route exact path="/settings">
-              <Settings />
-            </Route>
-            <Route exact path="/signin">
-              <SignIn />
-            </Route>
-            <Route exact path="/signup">
-              <SignUp />
-            </Route>
           </Router>
         </div>
       </AuthContext.Provider>
