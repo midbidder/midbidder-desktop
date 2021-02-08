@@ -10,15 +10,25 @@ import {
   styleLoginButton,
   styleLoginButtonHover,
 } from "../styles/SignInStyles";
+import axios from "axios";
 
 function SignInButton(signInProps: { signUp?: boolean | undefined }) {
   const successCallback = (
     response: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => {
-    const tokenId = keyInObject("tokenId", response)
-      ? (response as GoogleLoginResponse).tokenId
+    const id_token = keyInObject("tokenId", response)
+      ? (response as GoogleLoginResponse).getAuthResponse().id_token
       : undefined;
-    // TODO: database stuff here. Check if account exists. If not, create account.
+    
+      /* Send token to server to validate
+    (create account if needed)
+    sign in and start session
+    return user information*/
+    var post_url = "http://localhost:5000/signin"
+    axios.post(post_url, {id_token: id_token})
+      .then(data => {
+        console.log(data)
+      })
   };
   const failureCallback = (response: GoogleLoginResponse) => {
     console.log("c--------------");
