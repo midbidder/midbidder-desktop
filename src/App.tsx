@@ -75,8 +75,8 @@ export default function App() {
         <NavBar title={"midbidder"} siteMap={siteMap} />
         <div>
           <Router>
-            {siteMap.map((value: SiteMapping) => (
-              <Route exact={value.exact} path={value.route}>
+            {siteMap.map((value: SiteMapping, index: number) => (
+              <Route key={`${index}-route-comp`} exact={value.exact} path={value.route}>
                 {value.component}
               </Route>
             ))}

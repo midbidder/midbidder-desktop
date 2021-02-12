@@ -30,12 +30,12 @@ export default function NavBar(props: NavBarProps) {
         >
           {props.siteMap
             .filter((tabSetting: SiteMapping) => tabSetting.tab)
-            .map((tabSetting: SiteMapping) => (
-              <Nav.Link href={tabSetting.route}>{tabSetting.title}</Nav.Link>
+            .map((tabSetting: SiteMapping, index: number) => (
+              <Nav.Link key={`${index}-navlink`} href={tabSetting.route}>{tabSetting.title}</Nav.Link>
             ))}
           <NavDropdown title="profile" id="basic-nav-dropdown">
             <NavDropdown.Item href="/settings">
-              <Nav.Link href="/settings">settings</Nav.Link>
+              <Nav.Link key="settings-navlink" href="/settings">settings</Nav.Link>
             </NavDropdown.Item>
 
             <NavDropdown.Divider />
