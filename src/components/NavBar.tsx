@@ -15,7 +15,7 @@ export interface NavBarProps {
 }
 
 export default function NavBar(props: NavBarProps) {
-  const auth = useContext(AuthContext);
+  // const auth = useContext(AuthContext);
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand href="/">{props.title}</Navbar.Brand>
