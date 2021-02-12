@@ -1,26 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import AnimatedButton from "react-animated-buttons";
 import ReactTextTransition from "react-text-transition";
-
-function shuffle(array: any[]) {
-  var currentIndex = array.length,
-    temporaryValue,
-    randomIndex;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
+import { shuffle } from "../util/Sorting";
+import { purple } from "../styles/GlobalStyles";
 
 const defaultTextOptions = "Play!";
 let textOptions = [
@@ -63,11 +45,18 @@ export default function PlayButton() {
         setHoveredOver(false);
       }}
     >
-      <AnimatedButton color="info" animationDuration={1} animationType="pulse">
+      <AnimatedButton
+        color={purple}
+        animationDuration={1}
+        animationType="pulse"
+      >
         <div
           style={{
-            width: 300,
-            textAlign: "center",
+            width: 250,
+            height: 50,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <ReactTextTransition text={textOptions[buttonText]} delay={1} />
