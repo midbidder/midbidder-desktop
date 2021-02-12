@@ -2,9 +2,12 @@ import React from "react";
 import PlayButton from "../components/PlayButton";
 
 export default function Home() {
-  return <h1>home
+  return (
     <div>
-      <PlayButton/>
+      <h1>home</h1>
+      <div>
+        <PlayButton />
+      </div>
     </div>
-  </h1>;
+  );
 }
