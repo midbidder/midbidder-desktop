@@ -9,7 +9,6 @@ let textOptions = [
   "Looking mean!",
   "Be the center of attention.",
   "Be the middle man.",
-  "Hi, Malcolm!",
 ];
 textOptions = shuffle(textOptions);
 textOptions.unshift(defaultTextOptions);
@@ -37,13 +36,14 @@ export default function PlayButton() {
   }
 
   return (
-    <div
+    <a
       onMouseOver={() => {
         setHoveredOver(true);
       }}
       onMouseLeave={() => {
         setHoveredOver(false);
       }}
+      href="/play"
     >
       <AnimatedButton
         color={purple}
@@ -62,6 +62,6 @@ export default function PlayButton() {
           <ReactTextTransition text={textOptions[buttonText]} delay={1} />
         </div>
       </AnimatedButton>
-    </div>
+    </a>
   );
 }
