@@ -2,7 +2,7 @@ import { useState } from "react";
 import AnimatedButton from "react-animated-buttons";
 import ReactTextTransition from "react-text-transition";
 import { shuffle } from "../util/Sorting";
-import { purple } from "../styles/GlobalStyles";
+import { purple, titleFont } from "../styles/GlobalStyles";
 
 const defaultTextOptions = "Play!";
 let textOptions = [
@@ -25,7 +25,6 @@ export default function PlayButton() {
   };
   const animateButtonText = () => {
     timeOutHandle = setTimeout(() => {
-      console.log("a");
       setButtonText((buttonText + 1) % textOptions.length);
     }, 1000);
   };
@@ -59,7 +58,7 @@ export default function PlayButton() {
             alignItems: "center",
           }}
         >
-          <ReactTextTransition text={textOptions[buttonText]} delay={1} />
+          <ReactTextTransition style={{ fontFamily: titleFont, fontSize: "1em"}} text={textOptions[buttonText]} delay={1} />
         </div>
       </AnimatedButton>
     </a>
