@@ -5,11 +5,12 @@ import {
   GoogleLoginResponseOffline,
 } from "react-google-login";
 import { keyInObject } from "../util/TypeComparison";
-import { Button } from "react-bootstrap";
+import AnimatedButton from "react-animated-buttons";
 import {
   styleLoginButton,
   styleLoginButtonHover,
 } from "../styles/SignInStyles";
+import { purple } from "../styles/GlobalStyles";
 
 function SignInButton(signInProps: { signUp?: boolean | undefined }) {
   const successCallback = (
@@ -33,7 +34,10 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
           disabled?: boolean | undefined;
         }) => {
           return (
-            <Button
+            <AnimatedButton
+              color={purple}
+              animationDuration={1}
+              animationType="pulse"
               onClick={buttonProps.onClick}
               disabled={buttonProps.disabled}
               onMouseOver={() => {
@@ -45,7 +49,7 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
               style={buttonHover ? styleLoginButtonHover : styleLoginButton}
             >
               {signInProps.signUp ? "sign up" : "sign in"} with google
-            </Button>
+            </AnimatedButton>
           );
         }}
         onSuccess={successCallback}
@@ -77,7 +81,9 @@ export function SignIn() {
             <i>don't have an account?</i>
           </u>
         </div>
-        <div><a href="/signup">sign up for free.</a></div>
+        <div>
+          <a href="/signup">sign up for free.</a>
+        </div>
       </div>
     </div>
   );
@@ -103,7 +109,9 @@ export function SignUp() {
             <i>already have an account?</i>
           </u>
         </div>
-        <div><a href="/signin">sign in for free.</a></div>
+        <div>
+          <a href="/signin">sign in for free.</a>
+        </div>
       </div>
     </div>
   );
