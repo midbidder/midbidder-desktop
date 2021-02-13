@@ -24,14 +24,14 @@ export function BodyText(props: TextProps) {
     fontSize = size;
   }
   return (
-    <div
+    <span
       style={{
         fontFamily: bodyFont,
         fontSize,
       }}
     >
       {props.children}
-    </div>
+    </span>
   );
 }
 
@@ -53,14 +53,14 @@ export function TitleText(props: TextProps) {
     fontSize = size;
   }
   return (
-    <div
+    <span
       style={{
         fontFamily: titleFont,
         fontSize,
       }}
     >
       {props.children}
-    </div>
+    </span>
   );
 }
 
