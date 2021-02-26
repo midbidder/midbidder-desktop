@@ -1,4 +1,4 @@
-import { purple } from "./GlobalStyles";
+import { titleFont, purple } from "./GlobalStyles";
 
 export const styleLoginButton = {
   backgroundColor: purple,
@@ -6,8 +6,10 @@ export const styleLoginButton = {
   border: "none",
   marginTop: 3,
   marginBottom: 3,
+  fontFamily: titleFont,
 };
 export const styleLoginButtonHover = {
   backgroundColor: purple,
   border: `3px solid ${purple}`,
+  fontFamily: titleFont,
 };

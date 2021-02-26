@@ -5,12 +5,12 @@ import {
   GoogleLoginResponseOffline,
 } from "react-google-login";
 import { keyInObject } from "../util/TypeComparison";
-import AnimatedButton from "react-animated-buttons";
 import {
   styleLoginButton,
   styleLoginButtonHover,
-} from "../styles/SignInStyles";
-import { purple } from "../styles/GlobalStyles";
+} from "../styles/SignInStyles"
+import { BodyText, TitleText } from "../components/Text";
+import { Button } from "react-bootstrap";
 
 function SignInButton(signInProps: { signUp?: boolean | undefined }) {
   const successCallback = (
@@ -34,10 +34,7 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
           disabled?: boolean | undefined;
         }) => {
           return (
-            <AnimatedButton
-              color={purple}
-              animationDuration={1}
-              animationType="pulse"
+            <Button
               onClick={buttonProps.onClick}
               disabled={buttonProps.disabled}
               onMouseOver={() => {
@@ -49,7 +46,7 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
               style={buttonHover ? styleLoginButtonHover : styleLoginButton}
             >
               {signInProps.signUp ? "sign up" : "sign in"} with google
-            </AnimatedButton>
+            </Button>
           );
         }}
         onSuccess={successCallback}
@@ -72,8 +69,8 @@ export function SignIn() {
         }}
       >
         <div style={{ height: 100 }} />
-        <h3>welcome back.</h3>
-        <h1>sign in</h1>
+        <BodyText>welcome back.</BodyText>
+        <TitleText size="m">sign in</TitleText>
         <SignInButton />
         <div style={{ height: 100 }} />
         <div>
@@ -100,13 +97,13 @@ export function SignUp() {
         }}
       >
         <div style={{ height: 100 }} />
-        <h3>join the action.</h3>
-        <h1>sign up</h1>
+        <BodyText>join the action.</BodyText>
+        <TitleText size="m">sign up</TitleText>
         <SignInButton signUp={true} />
         <div style={{ height: 100 }} />
         <div>
           <u>
-            <i>already have an account?</i>
+            <BodyText italics size="s">already have an account?</BodyText>
           </u>
         </div>
         <div>

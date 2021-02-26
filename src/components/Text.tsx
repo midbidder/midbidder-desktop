@@ -1,9 +1,16 @@
 import React from "react";
-import { titleFont, bodyFont } from "../styles/GlobalStyles";
+import {
+  titleFont,
+  bodyFont,
+  bodyFontWeight,
+  titleFontWeight,
+} from "../styles/GlobalStyles";
 
 interface TextProps {
   children: string;
   size?: "s" | "m" | "l" | string;
+  italics?: boolean;
+  underline?: boolean;
 }
 
 /**
@@ -15,9 +22,9 @@ export function BodyText(props: TextProps) {
   const size = props.size || "m";
   let fontSize;
   if (size === "s") {
-    fontSize = "1em";
+    fontSize = "1.3em";
   } else if (size === "m") {
-    fontSize = "1.5em";
+    fontSize = "1.6em";
   } else if (size === "l") {
     fontSize = "2em";
   } else {
@@ -28,6 +35,9 @@ export function BodyText(props: TextProps) {
       style={{
         fontFamily: bodyFont,
         fontSize,
+        fontStyle: props.italics ? "italic" : undefined,
+        fontWeight: bodyFontWeight,
+        textDecoration: props.underline ? "underline" : undefined,
       }}
     >
       {props.children}
@@ -57,6 +67,9 @@ export function TitleText(props: TextProps) {
       style={{
         fontFamily: titleFont,
         fontSize,
+        fontStyle: props.italics ? "italic" : undefined,
+        fontWeight: titleFontWeight,
+        textDecoration: props.underline ? "underline" : undefined,
       }}
     >
       {props.children}
@@ -65,14 +78,32 @@ export function TitleText(props: TextProps) {
 }
 
 export function ExampleTextSwatch() {
+  const sizeOptions = ["s", "m", "l"];
+  const italicOptions = [false, true];
+  const underlineOptions = [false, true];
+  const componentOptions = [BodyText, TitleText];
+  const componentCombinations: React.ReactNode[] = [];
+  componentOptions.forEach((TextComponent) => {
+    const componentDescription = TextComponent === BodyText ? "Body" : "Title";
+    sizeOptions.forEach((sizeOption) => {
+      italicOptions.forEach((italicOption) => {
+        underlineOptions.forEach((underlineOption) => {
+          componentCombinations.push(
+            <TextComponent
+              underline={underlineOption}
+              italics={italicOption}
+              size={sizeOption}
+            >
+              {`${componentDescription}${(italicOptions ? " italic" : "")}${(underlineOption ? " underline" : "")} (${sizeOption})`}
+            </TextComponent>
+          );
+        });
+      });
+    });
+  });
   return (
-    <div>
-      <TitleText size="s">Example of small title text</TitleText>
-      <TitleText size="m">Example of medium title text</TitleText>
-      <TitleText size="l">Example of large title text</TitleText>
-      <BodyText size="s">Example of small body text</BodyText>
-      <BodyText size="m">Example of medium body text</BodyText>
-      <BodyText size="l">Example of large body text</BodyText>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      {componentCombinations}
     </div>
   );
 }

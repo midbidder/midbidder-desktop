@@ -1,8 +1,8 @@
 import { useState } from "react";
-import AnimatedButton from "react-animated-buttons";
 import ReactTextTransition from "react-text-transition";
 import { shuffle } from "../util/Sorting";
 import { purple, titleFont } from "../styles/GlobalStyles";
+import { Button } from "react-bootstrap";
 
 const defaultTextOptions = "Play!";
 let textOptions = [
@@ -44,11 +44,7 @@ export default function PlayButton() {
       }}
       href="/play"
     >
-      <AnimatedButton
-        color={purple}
-        animationDuration={1}
-        animationType="pulse"
-      >
+      <Button>
         <div
           style={{
             width: 250,
@@ -60,7 +56,7 @@ export default function PlayButton() {
         >
           <ReactTextTransition style={{ fontFamily: titleFont, fontSize: "1em"}} text={textOptions[buttonText]} delay={1} />
         </div>
-      </AnimatedButton>
+      </Button>
     </a>
   );
 }

@@ -1,5 +1,6 @@
 import React from "react";
+import { TitleText } from "../components/Text";
 
 export default function Settings() {
-  return <h1>settings</h1>;
+  return <TitleText>Settings</TitleText>;
 }
