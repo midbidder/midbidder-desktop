@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import { bodyFont } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
-
+import { BidSlider} from "./BidSlider";
 const unitLength = "3em";
 
 interface BidChildrenProps {
@@ -26,21 +26,21 @@ interface BidButtonProps {
 
 const sliderMaxSettings = [10, 100, 1000, 10000];
 
-function BidSlider(props: BidChildrenProps) {
+function BidQuantitySlider(props: BidChildrenProps) {
   const [sliderMax, setSliderMax] = useState(1);
   const [showMaxOverlay, setShowMaxOverlay] = useState(false);
   return (
     <div>
       <div>
-        <Form.Control
-          type="range"
+        <BidSlider
+          defaultValue={0}
           value={
             isNaN(props.bidValue)
               ? 0
               : (100 * props.bidValue) / sliderMaxSettings[sliderMax]
           }
-          onChange={(event) => {
-            const percent = parseInt(event.target.value);
+          onChange={(event: React.ChangeEvent<{}>, sliderValue: number | number[]) => {
+            const percent = sliderValue as number;
             const newBidValue = (sliderMaxSettings[sliderMax] * percent) / 100;
             props.setBidValue(newBidValue);
           }}
@@ -79,7 +79,7 @@ function BidSlider(props: BidChildrenProps) {
                   <DropdownButton
                     as={ButtonGroup}
                     title={sliderMaxSettings[sliderMax]}
-                    style={{fontFamily: bodyFont}}
+                    style={{ fontFamily: bodyFont }}
                     id="bg-vertical-dropdown-1"
                   >
                     {sliderMaxSettings.map((value: number, index: number) => (
@@ -196,7 +196,7 @@ export default function BidQuantityForm() {
           <BidButton sign="+" bidValue={bidValue} setBidValue={setBidValue} />
         </div>
         <div style={{ width: "15em" }}>
-          <BidSlider bidValue={bidValue} setBidValue={setBidValue} />
+          <BidQuantitySlider bidValue={bidValue} setBidValue={setBidValue} />
         </div>
       </div>
     </div>
