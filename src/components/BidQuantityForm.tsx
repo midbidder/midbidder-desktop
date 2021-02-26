@@ -10,6 +10,8 @@ import {
   Dropdown,
   ButtonGroup,
 } from "react-bootstrap";
+import { bodyFont } from "../styles/GlobalStyles";
+import { BodyText, TitleText } from "./Text";
 
 const unitLength = "3em";
 
@@ -51,7 +53,10 @@ function BidSlider(props: BidChildrenProps) {
           textAlign: "center",
         }}
       >
-        <span style={{ width: unitLength }}>0</span>
+        <BodyText size="s" underline>
+          0
+        </BodyText>
+
         <span
           style={{ width: unitLength }}
           onMouseOver={() => {
@@ -67,11 +72,14 @@ function BidSlider(props: BidChildrenProps) {
                 id="popover-basic"
                 onMouseOut={() => setShowMaxOverlay(false)}
               >
-                <Popover.Title as="h5">set max</Popover.Title>
+                <Popover.Title>
+                  <BodyText size="s">set max</BodyText>
+                </Popover.Title>
                 <Popover.Content>
                   <DropdownButton
                     as={ButtonGroup}
                     title={sliderMaxSettings[sliderMax]}
+                    style={{fontFamily: bodyFont}}
                     id="bg-vertical-dropdown-1"
                   >
                     {sliderMaxSettings.map((value: number, index: number) => (
@@ -83,7 +91,7 @@ function BidSlider(props: BidChildrenProps) {
                             props.setBidValue(sliderMaxSettings[index]);
                         }}
                       >
-                        {value}
+                        <BodyText size="s">{value.toString()}</BodyText>
                       </Dropdown.Item>
                     ))}
                   </DropdownButton>
@@ -91,7 +99,9 @@ function BidSlider(props: BidChildrenProps) {
               </Popover>
             }
           >
-            <u>{sliderMaxSettings[sliderMax]}</u>
+            <BodyText size="s" underline>
+              {sliderMaxSettings[sliderMax].toString()}
+            </BodyText>
           </OverlayTrigger>
         </span>
       </div>
@@ -116,6 +126,7 @@ function BidTextInput(props: BidChildrenProps) {
             width: "9em",
             borderRadius: 0,
             textAlign: "center",
+            fontFamily: bodyFont,
           }}
           value={props.bidValue}
           onChange={(event: React.ChangeEvent<any>) => {
@@ -154,7 +165,7 @@ function BidButton(props: BidChildrenProps & BidButtonProps) {
         props.setBidValue(props.bidValue + (props.sign === "+" ? 1 : -1));
       }}
     >
-      {props.sign}
+      <BodyText>{props.sign}</BodyText>
     </Button>
   );
 }
@@ -170,9 +181,9 @@ export default function BidQuantityForm() {
           alignItems: "center",
         }}
       >
-        <h5>
-          <u>select bid quantity</u>
-        </h5>
+        <TitleText size="s" underline>
+          select bid quantity
+        </TitleText>
         <div
           style={{
             display: "flex",

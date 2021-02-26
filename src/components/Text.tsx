@@ -4,19 +4,29 @@ import {
   bodyFont,
   bodyFontWeight,
   titleFontWeight,
+  blue,
 } from "../styles/GlobalStyles";
 
+/**
+ * @param children text within.
+ * @param italics whether text is italic
+ * @param underline whether text is underlined
+ * @param href link
+ * @param newTab whether link opens in new tab. Ignored if link is undefined.
+ */
 interface TextProps {
   children: string;
   size?: "s" | "m" | "l" | string;
   italics?: boolean;
   underline?: boolean;
+  href?: string;
+  newTab?: boolean;
 }
 
 /**
  *  @description Basic component for body text.
  *  @param size medium by default.
- *  @param children text within.
+ *  @see TextProps for remaining properties.
  */
 export function BodyText(props: TextProps) {
   const size = props.size || "m";
@@ -40,7 +50,18 @@ export function BodyText(props: TextProps) {
         textDecoration: props.underline ? "underline" : undefined,
       }}
     >
-      {props.children}
+      {props.href ? (
+        <a
+          href={props.href}
+          rel="noreferrer"
+          target={props.newTab ? "_blank" : undefined}
+          style={{ color: blue }}
+        >
+          {props.children}
+        </a>
+      ) : (
+        props.children
+      )}
     </span>
   );
 }
@@ -81,6 +102,8 @@ export function ExampleTextSwatch() {
   const sizeOptions = ["s", "m", "l"];
   const italicOptions = [false, true];
   const underlineOptions = [false, true];
+  const hrefOptions = [undefined, "/play"];
+  const newTabOptions = [false, true];
   const componentOptions = [BodyText, TitleText];
   const componentCombinations: React.ReactNode[] = [];
   componentOptions.forEach((TextComponent) => {
@@ -88,15 +111,25 @@ export function ExampleTextSwatch() {
     sizeOptions.forEach((sizeOption) => {
       italicOptions.forEach((italicOption) => {
         underlineOptions.forEach((underlineOption) => {
-          componentCombinations.push(
-            <TextComponent
-              underline={underlineOption}
-              italics={italicOption}
-              size={sizeOption}
-            >
-              {`${componentDescription}${(italicOptions ? " italic" : "")}${(underlineOption ? " underline" : "")} (${sizeOption})`}
-            </TextComponent>
-          );
+          hrefOptions.forEach((hrefOption) => {
+            newTabOptions.forEach((newTabOption) => {
+              componentCombinations.push(
+                <TextComponent
+                  underline={underlineOption}
+                  italics={italicOption}
+                  size={sizeOption}
+                  href={hrefOption}
+                  newTab={newTabOption}
+                >
+                  {`${componentDescription}${italicOptions ? " italic" : ""}${
+                    underlineOption ? " underline" : ""
+                  } (${sizeOption})${hrefOption ? " link" : ""}${
+                    newTabOption ? " newtab" : ""
+                  }`}
+                </TextComponent>
+              );
+            });
+          });
         });
       });
     });

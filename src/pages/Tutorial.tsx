@@ -1,5 +1,6 @@
 import React from "react";
+import { TitleText } from "../components/Text";
 
 export default function Tutorial() {
-  return <h1>tutorial</h1>;
+  return <TitleText>Tutorial</TitleText>;
 }

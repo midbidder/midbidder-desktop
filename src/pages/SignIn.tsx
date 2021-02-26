@@ -8,7 +8,7 @@ import { keyInObject } from "../util/TypeComparison";
 import {
   styleLoginButton,
   styleLoginButtonHover,
-} from "../styles/SignInStyles"
+} from "../styles/SignInStyles";
 import { BodyText, TitleText } from "../components/Text";
 import { Button } from "react-bootstrap";
 
@@ -72,14 +72,16 @@ export function SignIn() {
         <BodyText>welcome back.</BodyText>
         <TitleText size="m">sign in</TitleText>
         <SignInButton />
-        <div style={{ height: 100 }} />
+        <div style={{ height: 50 }} />
         <div>
-          <u>
-            <i>don't have an account?</i>
-          </u>
+          <BodyText italics size="s" underline>
+            don't have an account?
+          </BodyText>
         </div>
         <div>
-          <a href="/signup">sign up for free.</a>
+          <BodyText href="/signup" size="s">
+            sign up for free.
+          </BodyText>
         </div>
       </div>
     </div>
@@ -100,14 +102,16 @@ export function SignUp() {
         <BodyText>join the action.</BodyText>
         <TitleText size="m">sign up</TitleText>
         <SignInButton signUp={true} />
-        <div style={{ height: 100 }} />
+        <div style={{ height: 50 }} />
         <div>
-          <u>
-            <BodyText italics size="s">already have an account?</BodyText>
-          </u>
+          <BodyText italics size="s" underline>
+            already have an account?
+          </BodyText>
         </div>
         <div>
-          <a href="/signin">sign in for free.</a>
+          <BodyText href="/signin" size="s">
+            sign in for free.
+          </BodyText>
         </div>
       </div>
     </div>

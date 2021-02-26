@@ -44,18 +44,22 @@ export default function PlayButton() {
       }}
       href="/play"
     >
-      <Button>
-        <div
-          style={{
-            width: 250,
-            height: 50,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ReactTextTransition style={{ fontFamily: titleFont, fontSize: "1em"}} text={textOptions[buttonText]} delay={1} />
-        </div>
+      <Button
+        style={{
+          width: 250,
+          height: 50,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: purple,
+          margin: "1em"
+        }}
+      >
+        <ReactTextTransition
+          style={{ fontFamily: titleFont, fontSize: "1em" }}
+          text={textOptions[buttonText]}
+          delay={1}
+        />
       </Button>
     </a>
   );
