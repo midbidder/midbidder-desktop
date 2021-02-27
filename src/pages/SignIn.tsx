@@ -10,7 +10,8 @@ import {
   styleLoginButtonHover,
 } from "../styles/SignInStyles";
 import { BodyText, TitleText } from "../components/Text";
-import { Button } from "react-bootstrap";
+import Button from "@material-ui/core/Button";
+import { blue } from "../styles/GlobalStyles";
 
 function SignInButton(signInProps: { signUp?: boolean | undefined }) {
   const successCallback = (
@@ -70,7 +71,17 @@ export function SignIn() {
       >
         <div style={{ height: 100 }} />
         <BodyText>welcome back.</BodyText>
-        <TitleText size="m">sign in</TitleText>
+        <span>
+          <TitleText size="m">s</TitleText>
+          <TitleText color={blue} size="m">
+            i
+          </TitleText>
+          <TitleText size="m">gn </TitleText>
+          <TitleText color={blue} size="m">
+            i
+          </TitleText>
+          <TitleText size="m">n</TitleText>
+        </span>
         <SignInButton />
         <div style={{ height: 50 }} />
         <div>
@@ -100,7 +111,14 @@ export function SignUp() {
       >
         <div style={{ height: 100 }} />
         <BodyText>join the action.</BodyText>
-        <TitleText size="m">sign up</TitleText>
+        <span>
+          {" "}
+          <TitleText size="m">s</TitleText>
+          <TitleText color={blue} size="m">
+            i
+          </TitleText>
+          <TitleText size="m">gn up</TitleText>
+        </span>
         <SignInButton signUp={true} />
         <div style={{ height: 50 }} />
         <div>

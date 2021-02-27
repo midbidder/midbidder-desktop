@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { AuthContext } from "../contexts/AuthContext";
-import { purple } from "../styles/GlobalStyles";
+import { blue, purple } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 export interface SiteMapping {
   title: string;
@@ -13,7 +13,6 @@ export interface SiteMapping {
 
 export interface NavBarProps {
   siteMap: SiteMapping[];
-  title: string;
 }
 
 export default function NavBar(props: NavBarProps) {
@@ -21,7 +20,11 @@ export default function NavBar(props: NavBarProps) {
   return (
     <Navbar style={{ backgroundColor: purple }} expand="lg">
       <Navbar.Brand href="/">
-        <TitleText size="m">{props.title}</TitleText>
+        <TitleText size="m">midb</TitleText>
+        <TitleText size="m" color={blue}>
+          i
+        </TitleText>
+        <TitleText size="m">dder</TitleText>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">

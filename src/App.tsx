@@ -42,13 +42,13 @@ export const siteMap: SiteMapping[] = [
   {
     title: "signin",
     route: "/signin",
-    component: <SignIn/>,
+    component: <SignIn />,
     tab: false,
   },
   {
     title: "signup",
     route: "/signup",
-    component: <SignUp/>,
+    component: <SignUp />,
     tab: false,
   },
 ];
@@ -72,11 +72,15 @@ export default function App() {
   return (
     <div>
       <AuthContext.Provider value={authState}>
-        <NavBar title={"midbidder"} siteMap={siteMap} />
+        <NavBar siteMap={siteMap} />
         <div>
           <Router>
             {siteMap.map((value: SiteMapping, index: number) => (
-              <Route key={`${index}-route-comp`} exact={value.exact} path={value.route}>
+              <Route
+                key={`${index}-route-comp`}
+                exact={value.exact}
+                path={value.route}
+              >
                 {value.component}
               </Route>
             ))}

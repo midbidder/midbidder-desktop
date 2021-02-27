@@ -21,6 +21,7 @@ interface TextProps {
   underline?: boolean;
   href?: string;
   newTab?: boolean;
+  color?: string;
 }
 
 /**
@@ -48,6 +49,7 @@ export function BodyText(props: TextProps) {
         fontStyle: props.italics ? "italic" : undefined,
         fontWeight: bodyFontWeight,
         textDecoration: props.underline ? "underline" : undefined,
+        color: props.color,
       }}
     >
       {props.href ? (
@@ -91,6 +93,7 @@ export function TitleText(props: TextProps) {
         fontStyle: props.italics ? "italic" : undefined,
         fontWeight: titleFontWeight,
         textDecoration: props.underline ? "underline" : undefined,
+        color: props.color,
       }}
     >
       {props.children}

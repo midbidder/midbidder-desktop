@@ -2,7 +2,7 @@ import { useState } from "react";
 import ReactTextTransition from "react-text-transition";
 import { shuffle } from "../util/Sorting";
 import { purple, titleFont } from "../styles/GlobalStyles";
-import { Button } from "react-bootstrap";
+import Button from "@material-ui/core/Button";
 
 const defaultTextOptions = "Play!";
 let textOptions = [
@@ -52,7 +52,7 @@ export default function PlayButton() {
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: purple,
-          margin: "1em"
+          margin: "1em",
         }}
       >
         <ReactTextTransition
