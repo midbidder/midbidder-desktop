@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import {
-  Button,
-  InputGroup,
-  FormControl,
-  Form,
   OverlayTrigger,
   Popover,
   DropdownButton,
   Dropdown,
   ButtonGroup,
 } from "react-bootstrap";
-import { bodyFont } from "../styles/GlobalStyles";
+import { blue, bodyFont } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
-import { BidSlider} from "./BidSlider";
+import { BidSlider } from "./BidSlider";
+import { Button, TextField } from "@material-ui/core/";
+
 const unitLength = "3em";
 
 interface BidChildrenProps {
@@ -39,7 +37,10 @@ function BidQuantitySlider(props: BidChildrenProps) {
               ? 0
               : (100 * props.bidValue) / sliderMaxSettings[sliderMax]
           }
-          onChange={(event: React.ChangeEvent<{}>, sliderValue: number | number[]) => {
+          onChange={(
+            event: React.ChangeEvent<{}>,
+            sliderValue: number | number[]
+          ) => {
             const percent = sliderValue as number;
             const newBidValue = (sliderMaxSettings[sliderMax] * percent) / 100;
             props.setBidValue(newBidValue);
@@ -111,31 +112,28 @@ function BidQuantitySlider(props: BidChildrenProps) {
 
 function BidTextInput(props: BidChildrenProps) {
   return (
-    <span
+    <TextField
+      placeholder="Bid Amount"
+      aria-label="Bid Amount"
+      type={"number"}
       style={{
-        height: unitLength,
+        width: "9em",
+        borderRadius: 0,
+        textAlign: "center",
+        fontFamily: bodyFont,
       }}
-    >
-      <InputGroup>
-        <FormControl
-          placeholder="Bid Amount"
-          aria-label="Bid Amount"
-          size="lg"
-          type={"number"}
-          style={{
-            width: "9em",
-            borderRadius: 0,
-            textAlign: "center",
-            fontFamily: bodyFont,
-          }}
-          value={props.bidValue}
-          onChange={(event: React.ChangeEvent<any>) => {
-            const formValue: number = parseInt(event.target.value);
-            props.setBidValue(formValue);
-          }}
-        />
-      </InputGroup>
-    </span>
+      InputProps={{
+        style: {
+          height: "4em",
+        },
+      }}
+      inputProps={{ min: 0, style: { textAlign: "center" } }}
+      value={props.bidValue}
+      onChange={(event: React.ChangeEvent<any>) => {
+        const formValue: number = parseInt(event.target.value);
+        props.setBidValue(formValue);
+      }}
+    />
   );
 }
 
@@ -157,8 +155,9 @@ function BidButton(props: BidChildrenProps & BidButtonProps) {
   return (
     <Button
       style={{
+        backgroundColor: blue,
+        color: "white",
         width: unitLength,
-        height: unitLength,
         ...(props.sign === "+" ? rightButtonStyle : leftButtonStyle),
       }}
       onClick={() => {
@@ -188,7 +187,6 @@ export default function BidQuantityForm() {
           style={{
             display: "flex",
             flexDirection: "row",
-            alignItems: "center",
           }}
         >
           <BidButton sign="-" bidValue={bidValue} setBidValue={setBidValue} />
