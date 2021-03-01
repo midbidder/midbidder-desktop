@@ -172,30 +172,28 @@ function BidButton(props: BidChildrenProps & BidButtonProps) {
 export default function BidQuantityForm() {
   const [bidValue, setBidValue] = useState(0);
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <TitleText size="s" underline>
+        select bid quantity
+      </TitleText>
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          flexDirection: "row",
         }}
       >
-        <TitleText size="s" underline>
-          select bid quantity
-        </TitleText>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
-          <BidButton sign="-" bidValue={bidValue} setBidValue={setBidValue} />
-          <BidTextInput bidValue={bidValue} setBidValue={setBidValue} />
-          <BidButton sign="+" bidValue={bidValue} setBidValue={setBidValue} />
-        </div>
-        <div style={{ width: "15em" }}>
-          <BidQuantitySlider bidValue={bidValue} setBidValue={setBidValue} />
-        </div>
+        <BidButton sign="-" bidValue={bidValue} setBidValue={setBidValue} />
+        <BidTextInput bidValue={bidValue} setBidValue={setBidValue} />
+        <BidButton sign="+" bidValue={bidValue} setBidValue={setBidValue} />
+      </div>
+      <div style={{ width: "15em" }}>
+        <BidQuantitySlider bidValue={bidValue} setBidValue={setBidValue} />
       </div>
     </div>
   );
