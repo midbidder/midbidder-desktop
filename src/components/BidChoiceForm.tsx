@@ -21,38 +21,14 @@ type BidChoiceDistribution = {
   y: number;
 };
 
-const dataValue: BidChoiceDistribution[] = [
-  { x: 1, y: 10 },
-  { x: 2, y: 90 },
-  { x: 3, y: 40 },
-  { x: 4, y: 10 },
-  { x: 5, y: 30 },
-  { x: 6, y: 50 },
-  { x: 1.6, y: 110 },
-  { x: 1.9, y: 100 },
-  { x: 6.1, y: 190 },
-  { x: 100, y: 10 },
-  { x: 23, y: 90 },
-  { x: 67, y: 40 },
-  { x: 104, y: 10 },
-  { x: 159, y: 30 },
-  { x: 6, y: 50 },
-  { x: 1.6, y: 110 },
-  { x: 1.9, y: 100 },
-  { x: 6.1, y: 190 },
-  { x: 1, y: 10 },
-  { x: 2, y: 90 },
-  { x: 3, y: 40 },
-  { x: 4, y: 10 },
-  { x: 5, y: 30 },
-  { x: 6, y: 50 },
-  { x: 1.6, y: 110 },
-  { x: 1.9, y: 100 },
-  { x: 6.1, y: 190 },
-];
+const dataValue: BidChoiceDistribution[] = [];
+for (let i = 0; i < 100; ++i) {
+  dataValue.push({ x: i, y: 50 + Math.random() * 10 });
+}
+console.log(dataValue);
 export const background = "#3b6978";
 export const background2 = "#204051";
-export const accentColor = "#edffea";
+export const accentColor = "#000";
 export const accentColorDark = "#75daad";
 const tooltipStyles = {
   ...defaultStyles,
@@ -145,12 +121,14 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
             width={width}
             height={height}
             fill="url(#area-background-gradient)"
-            rx={14}
+            rx={10}
           />
           <LinearGradient
             id="area-background-gradient"
-            from={"#0"}
+            from={purple}
+            fromOpacity={0.5}
             to={purple}
+            toOpacity={0.9}
           />
           <LinearGradient
             id="area-gradient"
@@ -176,8 +154,8 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
             data={dataValue}
             x={(d) => getChoice(d)}
             y={(d) => getVolume(d)}
-            yScale={choiceScale}
-            strokeWidth={1}
+            yScale={volumeScale}
+            strokeWidth={3}
             stroke="url(#area-gradient)"
             fill="url(#area-gradient)"
             curve={curveMonotoneX}
@@ -199,10 +177,10 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
               <Line
                 from={{ x: tooltipLeft, y: margin.top }}
                 to={{ x: tooltipLeft, y: innerHeight + margin.top }}
-                stroke={accentColorDark}
-                strokeWidth={2}
+                stroke={blue}
+                strokeWidth={3}
                 pointerEvents="none"
-                strokeDasharray="5,2"
+                strokeDasharray="10,2"
               />
               <circle
                 cx={tooltipLeft}
