@@ -17,6 +17,7 @@ import { LinearGradient } from "@visx/gradient";
 import { extent, max } from "d3-array";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import { blue, purple } from "../styles/GlobalStyles";
+import { BodyText } from "./Text";
 
 type BidChoiceDistribution = {
   x: number;
@@ -214,10 +215,10 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
               left={tooltipLeft}
               style={tooltipStyles}
             >
-              <div style={{ textAlign: "center" }}>
-                <div>{getVolume(tooltipData).toPrecision(2)}</div>
-                <div>{getChoice(tooltipData)}</div>
-              </div>
+              <BodyText
+              children={`%${(100 * getVolume(tooltipData)).toPrecision(2)} bidding on ${getChoice(tooltipData)}`}
+              size='xs'
+              />
             </TooltipWithBounds>
           </div>
         )}

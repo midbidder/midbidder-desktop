@@ -16,7 +16,7 @@ import {
  */
 interface TextProps {
   children: string;
-  size?: "s" | "m" | "l" | string;
+  size?: "xs" | "s" | "m" | "l" | string;
   italics?: boolean;
   underline?: boolean;
   href?: string;
@@ -32,7 +32,9 @@ interface TextProps {
 export function BodyText(props: TextProps) {
   const size = props.size || "m";
   let fontSize;
-  if (size === "s") {
+  if (size === "xs") {
+    fontSize = "1em";
+  } else if (size === "s") {
     fontSize = "1.3em";
   } else if (size === "m") {
     fontSize = "1.6em";
