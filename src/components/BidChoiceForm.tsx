@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { AreaClosed, Line, Bar } from "@visx/shape";
-import { curveMonotoneX } from "@visx/curve";
+import { curveLinear, curveMonotoneX } from "@visx/curve";
 import { Grid } from "@visx/grid";
 import { scaleLinear } from "@visx/scale";
 import {
@@ -12,7 +12,7 @@ import {
 import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
 import { localPoint } from "@visx/event";
 import { LinearGradient } from "@visx/gradient";
-import { max } from "d3-array";
+import { extent, max } from "d3-array";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import { blue, purple } from "../styles/GlobalStyles";
 
@@ -22,18 +22,18 @@ type BidChoiceDistribution = {
 };
 
 const dataValue: BidChoiceDistribution[] = [];
-for (let i = 0; i < 100; ++i) {
-  dataValue.push({ x: i, y: 50 + Math.random() * 10 });
+for (let i = 0; i < 500; ++i) {
+  dataValue.push({ x: i, y: 80 + Math.random() * 100 });
 }
 console.log(dataValue);
 export const background = "#3b6978";
 export const background2 = "#204051";
 export const accentColor = "#000";
-export const accentColorDark = "#75daad";
+export const accentColorDark = purple;
 const tooltipStyles = {
   ...defaultStyles,
-  background,
-  border: "1px solid white",
+  background: purple,
+  border: "2px solid white",
   color: "white",
 };
 
@@ -59,7 +59,6 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
     tooltipLeft = 0,
   }: AreaProps & WithTooltipProvidedProps<BidChoiceDistribution>) => {
     if (width < 10) return null;
-
     // bounds
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -80,8 +79,7 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
       () =>
         scaleLinear({
           range: [margin.left, margin.left + innerWidth],
-          domain: [0, max(dataValue, getChoice) || 0],
-          nice: true,
+          domain: extent(dataValue, getChoice) as [number, number],
         }),
       [margin.left, innerWidth] // dependencies
     );
@@ -95,23 +93,23 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
       ) => {
         // xPosition
         const xPosition = localPoint(event)?.x || 0;
-        console.log(xPosition);
-        // if (d1 && getDate(d1)) {
-        //   d =
-        //     x0.valueOf() - getDate(d0).valueOf() >
-        //     getDate(d1).valueOf() - x0.valueOf()
-        //       ? d1
-        //       : d0;
-        // }
-        // showTooltip({
-        //   tooltipData: d,
-        //   tooltipLeft: x,
-        //   tooltipTop: stockValueScale(getStockValue(d)),
-        // });
-      },
-      [] //[showTooltip, stockValueScale, dateScale]
-    );
+        // TODO: find nearest neighbor.
+        const xValue = Math.round(choiceScale.invert(xPosition));
+        const yValue = getVolume(dataValue[xValue]) || 0;
+        console.log(yValue);
+        const yPosition = volumeScale(yValue);
 
+        console.log("X:" + xValue + " Y:" + yValue);
+        console.log("XP:" + xPosition + " YP:" + yPosition);
+        console.log("-----");
+        showTooltip({
+          tooltipData: { x: xValue, y: yValue },
+          tooltipLeft: xPosition,
+          tooltipTop: yPosition,
+        });
+      },
+      [volumeScale, choiceScale, showTooltip]
+    );
     return (
       <div>
         <svg width={width} height={height}>
@@ -132,33 +130,19 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
           />
           <LinearGradient
             id="area-gradient"
-            from={"#fff"}
-            to={blue}
-            toOpacity={0.1}
-          />
-          <Grid
-            top={margin.top}
-            yScale={volumeScale}
-            left={margin.left}
-            xScale={choiceScale}
-            width={innerWidth}
-            height={innerHeight}
-            strokeDasharray="2,5"
-            stroke={accentColor}
-            strokeOpacity={0.2}
-            pointerEvents="none"
-            numTicksRows={10}
-            numTicksColumns={10}
+            from={blue}
+            to={"#fff"}
+            toOpacity={0.3}
           />
           <AreaClosed<BidChoiceDistribution>
             data={dataValue}
-            x={(d) => getChoice(d)}
-            y={(d) => getVolume(d)}
+            x={(d) => choiceScale(getChoice(d))}
+            y={(d) => volumeScale(getVolume(d))}
             yScale={volumeScale}
-            strokeWidth={3}
-            stroke="url(#area-gradient)"
+            strokeWidth={2}
+            stroke="#000"
             fill="url(#area-gradient)"
-            curve={curveMonotoneX}
+            curve={curveLinear /** TODO: Determine if smoothing needed */}
           />
           <Bar
             x={margin.left}
@@ -172,13 +156,27 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
             onMouseMove={handleTooltip}
             onMouseLeave={() => hideTooltip()}
           />
+          <Grid
+            top={margin.top}
+            yScale={volumeScale}
+            left={margin.left}
+            xScale={choiceScale}
+            width={innerWidth}
+            height={innerHeight}
+            strokeDasharray="3,3"
+            stroke={accentColor}
+            strokeOpacity={0.2}
+            pointerEvents="none"
+            numTicksRows={10}
+            numTicksColumns={10}
+          />
           {tooltipData && (
             <g>
               <Line
                 from={{ x: tooltipLeft, y: margin.top }}
                 to={{ x: tooltipLeft, y: innerHeight + margin.top }}
-                stroke={blue}
-                strokeWidth={3}
+                stroke={"#000"}
+                strokeWidth={2}
                 pointerEvents="none"
                 strokeDasharray="10,2"
               />
@@ -213,7 +211,7 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
               left={tooltipLeft + 12}
               style={tooltipStyles}
             >
-              {`$${getVolume(tooltipData)}`}
+              {getVolume(tooltipData)}
             </TooltipWithBounds>
             <Tooltip
               top={innerHeight + margin.top - 14}
@@ -225,7 +223,7 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
                 transform: "translateX(-50%)",
               }}
             >
-              {getVolume(tooltipData)}
+              {getChoice(tooltipData)}
             </Tooltip>
           </div>
         )}
