@@ -3,12 +3,7 @@ import { AreaClosed, Line, Bar } from "@visx/shape";
 import { curveStepBefore } from "@visx/curve";
 import { Grid } from "@visx/grid";
 import { scaleLinear } from "@visx/scale";
-import {
-  withTooltip,
-  Tooltip,
-  TooltipWithBounds,
-  defaultStyles,
-} from "@visx/tooltip";
+import { withTooltip, TooltipWithBounds, defaultStyles } from "@visx/tooltip";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Group } from "@visx/group";
 import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
@@ -17,7 +12,7 @@ import { LinearGradient } from "@visx/gradient";
 import { extent, max } from "d3-array";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import { blue, purple } from "../styles/GlobalStyles";
-import { BodyText } from "./Text";
+import { BodyText, TitleText } from "./Text";
 
 type BidChoiceDistribution = {
   x: number;
@@ -216,8 +211,10 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
               style={tooltipStyles}
             >
               <BodyText
-              children={`%${(100 * getVolume(tooltipData)).toPrecision(2)} bidding on ${getChoice(tooltipData)}`}
-              size='xs'
+                children={`%${(100 * getVolume(tooltipData)).toPrecision(
+                  2
+                )} bidding on ${getChoice(tooltipData)}`}
+                size="xs"
               />
             </TooltipWithBounds>
           </div>
@@ -229,7 +226,23 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
 
 export function BidChoiceForm() {
   return (
-    <div style={{ width: 600, height: 300 }}>
+    <div
+      style={{
+        width: "50%",
+        height: 200,
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <TitleText size="s" underline>
+          select bid choice
+        </TitleText>
+      </div>
       <ParentSize>
         {({ width, height }: { width: number; height: number }) => (
           <BidChoiceGraph width={width} height={height} />
