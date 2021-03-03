@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { AreaClosed, Line, Bar } from "@visx/shape";
-import { curveLinear, curveMonotoneX } from "@visx/curve";
+import { curveStepBefore } from "@visx/curve";
 import { Grid } from "@visx/grid";
 import { scaleLinear } from "@visx/scale";
 import {
@@ -9,6 +9,8 @@ import {
   TooltipWithBounds,
   defaultStyles,
 } from "@visx/tooltip";
+import { AxisBottom, AxisLeft } from "@visx/axis";
+import { Group } from "@visx/group";
 import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
 import { localPoint } from "@visx/event";
 import { LinearGradient } from "@visx/gradient";
@@ -22,24 +24,23 @@ type BidChoiceDistribution = {
 };
 
 const dataValue: BidChoiceDistribution[] = [];
-for (let i = 0; i < 500; ++i) {
-  dataValue.push({ x: i, y: 80 + Math.random() * 100 });
+for (let i = 1; i <= 10; ++i) {
+  dataValue.push({ x: i, y: Math.random() });
 }
-console.log(dataValue);
-export const background = "#3b6978";
-export const background2 = "#204051";
-export const accentColor = "#000";
-export const accentColorDark = purple;
+
 const tooltipStyles = {
   ...defaultStyles,
-  background: purple,
   border: "2px solid white",
   color: "white",
+  minWidth: 50,
+  backgroundColor: blue,
 };
 
+// padding for axis
+const paddingAxis = 30;
 // accessors
-const getChoice = (d: BidChoiceDistribution) => d.x;
-const getVolume = (d: BidChoiceDistribution) => d.y;
+const getChoice = (d: BidChoiceDistribution) => (d ? d.x : 0);
+const getVolume = (d: BidChoiceDistribution) => (d ? d.y : 0);
 
 export type AreaProps = {
   width: number;
@@ -94,14 +95,9 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
         // xPosition
         const xPosition = localPoint(event)?.x || 0;
         // TODO: find nearest neighbor.
-        const xValue = Math.round(choiceScale.invert(xPosition));
+        const xValue = Math.floor(choiceScale.invert(xPosition - paddingAxis));
         const yValue = getVolume(dataValue[xValue]) || 0;
-        console.log(yValue);
         const yPosition = volumeScale(yValue);
-
-        console.log("X:" + xValue + " Y:" + yValue);
-        console.log("XP:" + xPosition + " YP:" + yPosition);
-        console.log("-----");
         showTooltip({
           tooltipData: { x: xValue, y: yValue },
           tooltipLeft: xPosition,
@@ -112,69 +108,76 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
     );
     return (
       <div>
-        <svg width={width} height={height}>
-          <rect
-            x={0}
-            y={0}
-            width={width}
-            height={height}
-            fill="url(#area-background-gradient)"
-            rx={10}
-          />
-          <LinearGradient
-            id="area-background-gradient"
-            from={purple}
-            fromOpacity={0.5}
-            to={purple}
-            toOpacity={0.9}
-          />
-          <LinearGradient
-            id="area-gradient"
-            from={blue}
-            to={"#fff"}
-            toOpacity={0.3}
-          />
-          <AreaClosed<BidChoiceDistribution>
-            data={dataValue}
-            x={(d) => choiceScale(getChoice(d))}
-            y={(d) => volumeScale(getVolume(d))}
-            yScale={volumeScale}
-            strokeWidth={2}
-            stroke="#000"
-            fill="url(#area-gradient)"
-            curve={curveLinear /** TODO: Determine if smoothing needed */}
-          />
-          <Bar
-            x={margin.left}
-            y={margin.top}
-            width={innerWidth}
-            height={innerHeight}
-            fill="transparent"
-            rx={14}
-            onTouchStart={handleTooltip}
-            onTouchMove={handleTooltip}
-            onMouseMove={handleTooltip}
-            onMouseLeave={() => hideTooltip()}
-          />
-          <Grid
-            top={margin.top}
-            yScale={volumeScale}
-            left={margin.left}
-            xScale={choiceScale}
-            width={innerWidth}
-            height={innerHeight}
-            strokeDasharray="3,3"
-            stroke={accentColor}
-            strokeOpacity={0.2}
-            pointerEvents="none"
-            numTicksRows={10}
-            numTicksColumns={10}
-          />
+        <svg width={width + 2 * paddingAxis} height={height + 2 * paddingAxis}>
+          <Group top={paddingAxis} left={paddingAxis}>
+            <rect
+              x={0}
+              y={0}
+              width={width}
+              height={height}
+              fill="url(#area-background-gradient)"
+            />
+            <LinearGradient
+              id="area-background-gradient"
+              from={purple}
+              fromOpacity={1}
+              to={purple}
+              toOpacity={0.1}
+            />
+            <LinearGradient
+              id="area-gradient"
+              from={blue}
+              fromOpacity={1}
+              to={purple}
+              toOpacity={0}
+            />
+            <AreaClosed<BidChoiceDistribution>
+              data={dataValue}
+              x={(d) => choiceScale(getChoice(d))}
+              y={(d) => volumeScale(getVolume(d))}
+              yScale={volumeScale}
+              strokeWidth={2}
+              stroke="#000"
+              fill="url(#area-gradient)"
+              curve={curveStepBefore /** TODO: Determine if smoothing needed */}
+            />
+            <Bar
+              x={margin.left}
+              y={margin.top}
+              width={innerWidth}
+              height={innerHeight}
+              fill="transparent"
+              rx={14}
+              onTouchStart={handleTooltip}
+              onTouchMove={handleTooltip}
+              onMouseMove={handleTooltip}
+              onMouseLeave={() => hideTooltip()}
+            />
+            <Grid
+              top={margin.top}
+              yScale={volumeScale}
+              left={margin.left}
+              xScale={choiceScale}
+              width={innerWidth}
+              height={innerHeight}
+              strokeDasharray="3,3"
+              stroke={blue}
+              strokeOpacity={0.2}
+              pointerEvents="none"
+              numTicksRows={10}
+              numTicksColumns={10}
+            />
+            <AxisLeft scale={volumeScale} />
+            <AxisBottom top={height} scale={choiceScale} />
+          </Group>
           {tooltipData && (
             <g>
               <Line
-                from={{ x: tooltipLeft, y: margin.top }}
-                to={{ x: tooltipLeft, y: innerHeight + margin.top }}
+                from={{ x: tooltipLeft, y: margin.top + paddingAxis }}
+                to={{
+                  x: tooltipLeft,
+                  y: innerHeight + margin.top + paddingAxis,
+                }}
                 stroke={"#000"}
                 strokeWidth={2}
                 pointerEvents="none"
@@ -182,8 +185,8 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
               />
               <circle
                 cx={tooltipLeft}
-                cy={tooltipTop + 1}
-                r={4}
+                cy={tooltipTop + 1 + paddingAxis}
+                r={2}
                 fill="black"
                 fillOpacity={0.1}
                 stroke="black"
@@ -193,9 +196,9 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
               />
               <circle
                 cx={tooltipLeft}
-                cy={tooltipTop}
+                cy={tooltipTop + paddingAxis}
                 r={4}
-                fill={accentColorDark}
+                fill={purple}
                 stroke="white"
                 strokeWidth={2}
                 pointerEvents="none"
@@ -207,24 +210,15 @@ const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
           <div>
             <TooltipWithBounds
               key={Math.random()}
-              top={tooltipTop - 12}
-              left={tooltipLeft + 12}
+              top={innerHeight + margin.top - 25}
+              left={tooltipLeft}
               style={tooltipStyles}
             >
-              {getVolume(tooltipData)}
+              <div style={{ textAlign: "center" }}>
+                <div>{getVolume(tooltipData).toPrecision(2)}</div>
+                <div>{getChoice(tooltipData)}</div>
+              </div>
             </TooltipWithBounds>
-            <Tooltip
-              top={innerHeight + margin.top - 14}
-              left={tooltipLeft}
-              style={{
-                ...defaultStyles,
-                minWidth: 72,
-                textAlign: "center",
-                transform: "translateX(-50%)",
-              }}
-            >
-              {getChoice(tooltipData)}
-            </Tooltip>
           </div>
         )}
       </div>
