@@ -27,6 +27,14 @@ interface BidChoiceState {
   rightBorder: number | string;
 }
 
+interface StatisticHighlight {
+  x?: number;
+  x2?: number;
+  y?: number;
+  y2?: number;
+  color: number;
+}
+
 const defaultState: BidChoiceState = {
   left: "dataMin",
   right: "dataMax",
@@ -41,6 +49,53 @@ const roundingPrecision = 0.00001;
 const dataValue: BidChoiceDistribution[] = [];
 for (let i = 1; i <= 10; i += 0.1) {
   dataValue.push({ x: i, median: Math.random() });
+}
+
+const dataStats: StatisticHighlight[] = [];
+
+function StatFeature(feature: StatisticHighlight) {
+  // dot
+  if (feature.x2 === undefined && feature.y2 === undefined) {
+  }
+  // x line
+  else if (
+    feature.x !== undefined &&
+    feature.x2 === undefined &&
+    feature.y === undefined &&
+    feature.y2 === undefined
+  ) {
+  }
+  // y line
+  else if (
+    feature.x === undefined &&
+    feature.x2 === undefined &&
+    feature.y !== undefined &&
+    feature.y2 === undefined
+  ) {
+  }
+  // x range
+  else if (
+    feature.x !== undefined &&
+    feature.x2 !== undefined &&
+    feature.y === undefined &&
+    feature.y2 === undefined
+  ) {
+  }
+  // y range
+  else if (
+    feature.x === undefined &&
+    feature.x2 === undefined &&
+    feature.y !== undefined &&
+    feature.y2 !== undefined
+  ) {
+  } else if (
+    feature.x !== undefined &&
+    feature.x2 !== undefined &&
+    feature.y !== undefined &&
+    feature.y2 !== undefined
+  ) {
+  }
+  return <div></div>;
 }
 
 function BidChoiceGraph() {
@@ -171,6 +226,14 @@ function BidChoiceGraph() {
                   animationDuration={500}
                   yAxisId="1"
                 />
+                <ReferenceArea
+                  yAxisId="1"
+                  x1={2}
+                  x2={3}
+                  strokeOpacity={0.2}
+                  stroke={purple}
+                  fill={purple}
+                />
                 {graphState.leftBorder && graphState.rightBorder ? (
                   <ReferenceArea
                     yAxisId="1"
@@ -218,7 +281,7 @@ export function BidChoiceForm() {
         }}
       >
         <span>Reset Zoom</span>
-        <span>Settings</span>
+        <span>graph config</span>
       </div>
     </div>
   );
