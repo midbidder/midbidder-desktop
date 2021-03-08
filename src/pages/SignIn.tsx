@@ -4,7 +4,7 @@ import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
-import { keyInObject } from "../util/TypeComparison";
+import { keyInObject } from "../util/General";
 import {
   styleLoginButton,
   styleLoginButtonHover,

@@ -1,235 +1,201 @@
-import React, { useMemo, useCallback } from "react";
-import { AreaClosed, Line, Bar } from "@visx/shape";
-import { curveStepBefore } from "@visx/curve";
-import { Grid } from "@visx/grid";
-import { scaleLinear } from "@visx/scale";
-import { withTooltip, TooltipWithBounds, defaultStyles } from "@visx/tooltip";
-import { AxisBottom, AxisLeft } from "@visx/axis";
-import { Group } from "@visx/group";
-import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
-import { localPoint } from "@visx/event";
-import { LinearGradient } from "@visx/gradient";
-import { extent, max } from "d3-array";
-import ParentSize from "@visx/responsive/lib/components/ParentSize";
-import { blue, purple } from "../styles/GlobalStyles";
+import React, { useState } from "react";
+import { blue, bodyFont, purple } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
+import { cloneDeep, floor } from "lodash";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  CartesianGrid,
+  ReferenceArea,
+  YAxis,
+  Tooltip,
+} from "recharts";
+import ContainerDimensions from "react-container-dimensions";
 
 type BidChoiceDistribution = {
   x: number;
-  y: number;
+  median: number;
 };
 
-const dataValue: BidChoiceDistribution[] = [];
-for (let i = 1; i <= 10; ++i) {
-  dataValue.push({ x: i, y: Math.random() });
+interface BidChoiceState {
+  left: number | string;
+  right: number | string;
+  bottom: number | string;
+  top: number | string;
+  leftBorder: number | string;
+  rightBorder: number | string;
 }
 
-const tooltipStyles = {
-  ...defaultStyles,
-  border: "2px solid white",
-  color: "white",
-  minWidth: 50,
-  backgroundColor: blue,
+const defaultState: BidChoiceState = {
+  left: "dataMin",
+  right: "dataMax",
+  bottom: "dataMin",
+  top: "dataMax",
+  leftBorder: "",
+  rightBorder: "",
 };
 
-// padding for axis
-const paddingAxis = 30;
-// accessors
-const getChoice = (d: BidChoiceDistribution) => (d ? d.x : 0);
-const getVolume = (d: BidChoiceDistribution) => (d ? d.y : 0);
+const roundingPrecision = 0.00001;
 
-export type AreaProps = {
-  width: number;
-  height: number;
-  margin?: { top: number; right: number; bottom: number; left: number };
-};
+const dataValue: BidChoiceDistribution[] = [];
+for (let i = 1; i <= 10; i += 0.1) {
+  dataValue.push({ x: i, median: Math.random() });
+}
 
-const BidChoiceGraph = withTooltip<AreaProps, BidChoiceDistribution>(
-  ({
-    width,
-    height,
-    margin = { top: 0, right: 0, bottom: 0, left: 0 },
-    showTooltip,
-    hideTooltip,
-    tooltipData,
-    tooltipTop = 0,
-    tooltipLeft = 0,
-  }: AreaProps & WithTooltipProvidedProps<BidChoiceDistribution>) => {
-    if (width < 10) return null;
-    // bounds
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
+function BidChoiceGraph() {
+  const [data, setData] = useState(dataValue);
+  const [graphState, setGraphState] = useState(defaultState);
 
-    // memoization
-    const volumeScale = useMemo(
-      () =>
-        scaleLinear({
-          range: [margin.top + innerHeight, margin.top],
-          domain: [0, max(dataValue, getVolume) || 0],
-          nice: true,
-        }),
-      [margin.top, innerHeight] // dependencies
+  const getAxisYDomain = (
+    from: number,
+    to: number,
+    ref: string,
+    offset: number
+  ) => {
+    const refData: any[] = data.slice(from - 1, to);
+    let [bottom, top] = [refData[0][ref], refData[0][ref]];
+    // find min and max
+    refData.forEach((d) => {
+      if (d[ref] > top) top = d[ref];
+      if (d[ref] < bottom) bottom = d[ref];
+    });
+
+    return [(bottom | 0) - offset, (top | 0) + offset];
+  };
+
+  const zoomOut = () => {
+    setGraphState(defaultState);
+  };
+
+  const zoom = () => {
+    let leftBorder = graphState.leftBorder;
+    let rightBorder = graphState.rightBorder;
+    const oldState = cloneDeep(graphState);
+    oldState.leftBorder = "";
+    oldState.rightBorder = "";
+    // 0 width slice clears selection and does nothing else.
+    if (leftBorder === rightBorder || rightBorder === "") {
+      setGraphState(oldState);
+      return;
+    }
+    // ensure x selection is not flipped
+    if (leftBorder && leftBorder > rightBorder!)
+      [leftBorder, rightBorder] = [rightBorder, leftBorder];
+
+    // get the bottom & top (adjusted for min & max of selection)
+    const [bottom, top] = getAxisYDomain(
+      leftBorder === "" ? 0 : (leftBorder as number),
+      rightBorder === "" ? 0 : (rightBorder as number),
+      "median",
+      1
     );
+    setGraphState({
+      leftBorder: "",
+      rightBorder: "",
+      left: leftBorder,
+      right: rightBorder,
+      bottom,
+      top,
+    });
+  };
 
-    // memoization
-    const choiceScale = useMemo(
-      () =>
-        scaleLinear({
-          range: [margin.left, margin.left + innerWidth],
-          domain: extent(dataValue, getChoice) as [number, number],
-        }),
-      [margin.left, innerWidth] // dependencies
-    );
-
-    // tooltip handler
-    const handleTooltip = useCallback(
-      (
-        event:
-          | React.TouchEvent<SVGRectElement>
-          | React.MouseEvent<SVGRectElement>
-      ) => {
-        // xPosition
-        const xPosition = localPoint(event)?.x || 0;
-        // TODO: find nearest neighbor.
-        const xValue = Math.floor(choiceScale.invert(xPosition - paddingAxis));
-        const yValue = getVolume(dataValue[xValue]) || 0;
-        const yPosition = volumeScale(yValue);
-        showTooltip({
-          tooltipData: { x: xValue, y: yValue },
-          tooltipLeft: xPosition,
-          tooltipTop: yPosition,
-        });
-      },
-      [volumeScale, choiceScale, showTooltip]
-    );
-    return (
-      <div>
-        <svg width={width + 2 * paddingAxis} height={height + 2 * paddingAxis}>
-          <Group top={paddingAxis} left={paddingAxis}>
-            <rect
-              x={0}
-              y={0}
-              width={width}
-              height={height}
-              fill="url(#area-background-gradient)"
-            />
-            <LinearGradient
-              id="area-background-gradient"
-              from={purple}
-              fromOpacity={1}
-              to={purple}
-              toOpacity={0.1}
-            />
-            <LinearGradient
-              id="area-gradient"
-              from={blue}
-              fromOpacity={1}
-              to={purple}
-              toOpacity={0}
-            />
-            <AreaClosed<BidChoiceDistribution>
-              data={dataValue}
-              x={(d) => choiceScale(getChoice(d))}
-              y={(d) => volumeScale(getVolume(d))}
-              yScale={volumeScale}
-              strokeWidth={2}
-              stroke="#000"
-              fill="url(#area-gradient)"
-              curve={curveStepBefore /** TODO: Determine if smoothing needed */}
-            />
-            <Bar
-              x={margin.left}
-              y={margin.top}
-              width={innerWidth}
-              height={innerHeight}
-              fill="transparent"
-              rx={14}
-              onTouchStart={handleTooltip}
-              onTouchMove={handleTooltip}
-              onMouseMove={handleTooltip}
-              onMouseLeave={() => hideTooltip()}
-            />
-            <Grid
-              top={margin.top}
-              yScale={volumeScale}
-              left={margin.left}
-              xScale={choiceScale}
-              width={innerWidth}
-              height={innerHeight}
-              strokeDasharray="3,3"
-              stroke={blue}
-              strokeOpacity={0.2}
-              pointerEvents="none"
-              numTicksRows={10}
-              numTicksColumns={10}
-            />
-            <AxisLeft scale={volumeScale} />
-            <AxisBottom top={height} scale={choiceScale} />
-          </Group>
-          {tooltipData && (
-            <g>
-              <Line
-                from={{ x: tooltipLeft, y: margin.top + paddingAxis }}
-                to={{
-                  x: tooltipLeft,
-                  y: innerHeight + margin.top + paddingAxis,
+  return (
+    <div style={{ width: "100%", height: "100%", userSelect: "none" }}>
+      <ContainerDimensions>
+        {({ width, height }) => {
+          return (
+            <div className="highlight-bar-charts">
+              <LineChart
+                data={data}
+                width={width}
+                height={height}
+                onMouseDown={(e: any) => {
+                  const oldState = cloneDeep(graphState);
+                  oldState.leftBorder = e.activeLabel;
+                  setGraphState(oldState);
                 }}
-                stroke={"#000"}
-                strokeWidth={2}
-                pointerEvents="none"
-                strokeDasharray="10,2"
-              />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipTop + 1 + paddingAxis}
-                r={2}
-                fill="black"
-                fillOpacity={0.1}
-                stroke="black"
-                strokeOpacity={0.1}
-                strokeWidth={2}
-                pointerEvents="none"
-              />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipTop + paddingAxis}
-                r={4}
-                fill={purple}
-                stroke="white"
-                strokeWidth={2}
-                pointerEvents="none"
-              />
-            </g>
-          )}
-        </svg>
-        {tooltipData && (
-          <div>
-            <TooltipWithBounds
-              key={Math.random()}
-              top={innerHeight + margin.top - 25}
-              left={tooltipLeft}
-              style={tooltipStyles}
-            >
-              <BodyText
-                children={`%${(100 * getVolume(tooltipData)).toPrecision(
-                  2
-                )} bidding on ${getChoice(tooltipData)}`}
-                size="xs"
-              />
-            </TooltipWithBounds>
-          </div>
-        )}
-      </div>
-    );
-  }
-);
+                onMouseMove={(e: any) => {
+                  if (graphState.leftBorder) {
+                    const oldState = cloneDeep(graphState);
+                    oldState.rightBorder = e.activeLabel;
+                    setGraphState(oldState);
+                  }
+                }}
+                onMouseUp={() => {
+                  zoom();
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  allowDataOverflow
+                  dataKey="x"
+                  type="number"
+                  domain={[graphState.left, graphState.right]}
+                  stroke={purple}
+                  tickFormatter={(value: any) => {
+                    const tickValue = value as number;
+                    const roundTickValue = Math.round(tickValue);
+                    if (
+                      Math.abs(tickValue - roundTickValue) <= roundingPrecision
+                    ) {
+                      return `${roundTickValue}`;
+                    }
+                    return tickValue.toFixed(2);
+                  }}
+                />
+
+                <YAxis
+                  allowDataOverflow
+                  type="number"
+                  domain={[graphState.bottom, graphState.top]}
+                  stroke={purple}
+                  yAxisId="1"
+                  dataKey={"median"}
+                  tickFormatter={(value: any) => {
+                    return (value as number).toFixed(2);
+                  }}
+                />
+                <Tooltip
+                  formatter={(value: any) => {
+                    return (value as number).toFixed(3);
+                  }}
+                  labelFormatter={(label) => {
+                    return (label as number).toFixed(3);
+                  }}
+                />
+                <Line
+                  type="stepAfter"
+                  dataKey={"median"}
+                  stroke={blue}
+                  animationDuration={500}
+                  yAxisId="1"
+                />
+                {graphState.leftBorder && graphState.rightBorder ? (
+                  <ReferenceArea
+                    yAxisId="1"
+                    x1={graphState.leftBorder}
+                    x2={graphState.rightBorder}
+                    strokeOpacity={0.7}
+                    stroke={purple}
+                    fill={blue}
+                  />
+                ) : null}
+              </LineChart>
+            </div>
+          );
+        }}
+      </ContainerDimensions>
+    </div>
+  );
+}
 
 export function BidChoiceForm() {
   return (
     <div
       style={{
-        width: "50%",
-        height: 200,
+        width: "60%",
+        height: 300,
       }}
     >
       <div
@@ -243,11 +209,17 @@ export function BidChoiceForm() {
           select bid choice
         </TitleText>
       </div>
-      <ParentSize>
-        {({ width, height }: { width: number; height: number }) => (
-          <BidChoiceGraph width={width} height={height} />
-        )}
-      </ParentSize>
+      <BidChoiceGraph />
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-around",
+        }}
+      >
+        <span>Reset Zoom</span>
+        <span>Settings</span>
+      </div>
     </div>
   );
 }
