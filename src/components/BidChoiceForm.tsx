@@ -10,6 +10,8 @@ import {
   ReferenceArea,
   YAxis,
   Tooltip,
+  ReferenceLine,
+  ReferenceDot,
 } from "recharts";
 import ContainerDimensions from "react-container-dimensions";
 
@@ -32,7 +34,7 @@ interface StatisticHighlight {
   x2?: number;
   y?: number;
   y2?: number;
-  color: number;
+  color: string;
 }
 
 const defaultState: BidChoiceState = {
@@ -51,11 +53,57 @@ for (let i = 1; i <= 10; i += 0.1) {
   dataValue.push({ x: i, median: Math.random() });
 }
 
-const dataStats: StatisticHighlight[] = [];
-
-function StatFeature(feature: StatisticHighlight) {
+const dataStats: StatisticHighlight[] = [
+  // vertical line
+  {
+    x: 3,
+    color: "#D09",
+  },
+  // horzinotal line
+  {
+    y: 3,
+    color: "#DE9",
+  },
+  // vertical area
+  {
+    y: 0.2,
+    y2: 0.4,
+    color: "#F00",
+  },
+  // horizontal area
+  {
+    x: 2,
+    x2: 4,
+    color: "#BA0",
+  },
+  // 2d area
+  {
+    x: 3,
+    x2: 4,
+    y: 0.1,
+    y2: 0.4,
+    color: "#D3E",
+  },
   // dot
-  if (feature.x2 === undefined && feature.y2 === undefined) {
+  {
+    x: 6,
+    y: 0.2,
+    color: "#ed9",
+  },
+];
+
+function StatFeature(feature: StatisticHighlight, leftBorder: number | string, rightBorder: number | string) {
+  const left = typeof(leftBorder) === "number" ? leftBorder as number : undefined;
+  const right = typeof(rightBorder) === "number" ? rightBorder as number : undefined;
+
+  // dot
+  if (
+    feature.x !== undefined &&
+    feature.y !== undefined &&
+    feature.x2 === undefined &&
+    feature.y2 === undefined
+  ) {
+    <ReferenceDot x={feature.x} y={feature.y} />;
   }
   // x line
   else if (
@@ -64,6 +112,15 @@ function StatFeature(feature: StatisticHighlight) {
     feature.y === undefined &&
     feature.y2 === undefined
   ) {
+    return (
+      <ReferenceLine
+        yAxisId="1"
+        xAxisId="choiceScale"
+        x={feature.x}
+        strokeOpacity={0.7}
+        stroke={feature.color}
+      />
+    );
   }
   // y line
   else if (
@@ -72,6 +129,15 @@ function StatFeature(feature: StatisticHighlight) {
     feature.y !== undefined &&
     feature.y2 === undefined
   ) {
+    return (
+      <ReferenceLine
+        y={feature.y}
+        strokeOpacity={0.7}
+        stroke={feature.color}
+        yAxisId="1"
+        xAxisId="choiceScale"
+      />
+    );
   }
   // x range
   else if (
@@ -80,6 +146,17 @@ function StatFeature(feature: StatisticHighlight) {
     feature.y === undefined &&
     feature.y2 === undefined
   ) {
+    return (
+      <ReferenceArea
+        yAxisId="1"
+        xAxisId="choiceScale"
+        x1={left ? Math.max(left, feature.x) : feature.x}
+        x2={right ? Math.min(right, feature.x2) : feature.x2}
+        strokeOpacity={0.7}
+        stroke={purple}
+        fill={feature.color}
+      />
+    );
   }
   // y range
   else if (
@@ -88,14 +165,38 @@ function StatFeature(feature: StatisticHighlight) {
     feature.y !== undefined &&
     feature.y2 !== undefined
   ) {
+    return (
+      <ReferenceArea
+        yAxisId="1"
+        xAxisId="choiceScale"
+        y1={feature.y}
+        y2={feature.y2}
+        strokeOpacity={0.7}
+        stroke={purple}
+        fill={feature.color}
+      />
+    );
   } else if (
     feature.x !== undefined &&
     feature.x2 !== undefined &&
     feature.y !== undefined &&
     feature.y2 !== undefined
   ) {
+    return (
+      <ReferenceArea
+        yAxisId="1"
+        xAxisId="choiceScale"
+        x1={left ? Math.max(left, feature.x) : feature.x}
+        x2={right ? Math.min(right, feature.x2) : feature.x2}
+        y1={feature.y}
+        y2={feature.y2}
+        strokeOpacity={0.7}
+        stroke={purple}
+        fill={feature.color}
+      />
+    );
   }
-  return <div></div>;
+  return undefined;
 }
 
 function BidChoiceGraph() {
@@ -154,7 +255,7 @@ function BidChoiceGraph() {
       top,
     });
   };
-
+  console.log(graphState)
   return (
     <div style={{ width: "100%", height: "100%", userSelect: "none" }}>
       <ContainerDimensions>
@@ -198,6 +299,7 @@ function BidChoiceGraph() {
                     }
                     return tickValue.toFixed(2);
                   }}
+                  xAxisId="choiceScale"
                 />
 
                 <YAxis
@@ -225,18 +327,15 @@ function BidChoiceGraph() {
                   stroke={blue}
                   animationDuration={500}
                   yAxisId="1"
+                  xAxisId="choiceScale"
                 />
-                <ReferenceArea
-                  yAxisId="1"
-                  x1={2}
-                  x2={3}
-                  strokeOpacity={0.2}
-                  stroke={purple}
-                  fill={purple}
-                />
+                {dataStats.map((dataStat: StatisticHighlight) => {
+                  return StatFeature(dataStat, graphState.left, graphState.right);
+                })}
                 {graphState.leftBorder && graphState.rightBorder ? (
                   <ReferenceArea
                     yAxisId="1"
+                    xAxisId="choiceScale"
                     x1={graphState.leftBorder}
                     x2={graphState.rightBorder}
                     strokeOpacity={0.7}
