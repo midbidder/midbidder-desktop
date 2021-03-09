@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { blue, bodyFont, purple } from "../styles/GlobalStyles";
+import { blue, purple } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
-import { cloneDeep, floor } from "lodash";
+import { cloneDeep } from "lodash";
 import {
   LineChart,
   Line,
@@ -14,7 +14,14 @@ import {
   ReferenceDot,
 } from "recharts";
 import ContainerDimensions from "react-container-dimensions";
-import { Button } from "@material-ui/core";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Chip,
+} from "@material-ui/core";
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
 type BidChoiceDistribution = {
   x: number;
@@ -41,6 +48,11 @@ interface StatisticHighlight {
   r?: number;
 }
 
+interface GraphSetting {
+  label: string;
+  enable?: boolean;
+}
+
 const defaultState: BidChoiceState = {
   left: "dataMin",
   right: "dataMax",
@@ -51,6 +63,13 @@ const defaultState: BidChoiceState = {
 };
 
 const roundingPrecision = 0.00001;
+
+const defaultGraphSettings: GraphSetting[] = [
+  { label: "median" },
+  { label: "mean" },
+  { label: "%25" },
+  { label: "%75" },
+];
 
 const dataValue: BidChoiceDistribution[] = [];
 for (let i = 1; i <= 10; i += 0.1) {
@@ -243,8 +262,9 @@ function StatFeature(
 
 function BidChoiceGraph() {
   const [data, setData] = useState(dataValue);
+  const [configExpanded, setConfigExpanded] = useState(false);
   const [graphState, setGraphState] = useState(defaultState);
-
+  const [graphSettings, setGraphSettings] = useState(defaultGraphSettings);
   const getAxisYDomain = (from: number, to: number, ref: string) => {
     const refData: any[] = data.slice(from - 1, to);
     let [bottom, top] = [refData[0][ref], refData[0][ref]];
@@ -302,11 +322,13 @@ function BidChoiceGraph() {
                 width={width}
                 height={height}
                 onMouseDown={(e: any) => {
+                  if (!e) return;
                   const oldState = cloneDeep(graphState);
                   oldState.leftBorder = e.activeLabel;
                   setGraphState(oldState);
                 }}
                 onMouseMove={(e: any) => {
+                  if (!e) return;
                   if (graphState.leftBorder) {
                     const oldState = cloneDeep(graphState);
                     oldState.rightBorder = e.activeLabel;
@@ -394,44 +416,84 @@ function BidChoiceGraph() {
           justifyContent: "space-around",
         }}
       >
-        <div
+        <Button
           style={{
+            height: 40,
             display: "flex",
-            width: "100%",
-            justifyContent: "space-between",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: purple,
+            textTransform: "none",
+            flexGrow: 1,
           }}
+          onClick={() => zoomOut()}
         >
-          <Button
-            style={{
-              height: 40,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: purple,
-              textTransform: "none",
-              flexGrow: 1,
-            }}
-            onClick={() => zoomOut()}
-          >
-            <BodyText size="xs">reset zoom</BodyText>
-          </Button>
-          <div style={{ flexGrow: 1 }} />
-          <Button
-            style={{
-              height: 40,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: purple,
-              textTransform: "none",
-              flexGrow: 1,
-            }}
-            onClick={() => zoomOut()}
-          >
-            <BodyText size="xs">graph config</BodyText>
-          </Button>
-        </div>
+          <BodyText size="s">reset zoom</BodyText>
+        </Button>
+        <div style={{ flexGrow: 1 }} />
+        <Button
+          style={{
+            height: 40,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: purple,
+            textTransform: "none",
+            flexGrow: 1,
+          }}
+          onClick={() => setConfigExpanded(!configExpanded)}
+        >
+          <BodyText size="s">graph config</BodyText>
+        </Button>
       </div>
+      {
+        <Accordion style={{ boxShadow: "none" }} expanded={configExpanded}>
+          <AccordionSummary>
+            {configExpanded && <BodyText>graph configuration</BodyText>}
+          </AccordionSummary>
+          <AccordionDetails>
+            <div style={{ width: "100%" }}>
+              {graphSettings.map(
+                (graphSetting: GraphSetting, settingIndex: number) => (
+                  <Chip
+                    label={<BodyText size="xs">{graphSetting.label}</BodyText>}
+                    onDelete={
+                      graphSetting.enable
+                        ? () => {
+                            const newGraphSettings = cloneDeep(graphSettings);
+                            newGraphSettings[settingIndex].enable = false;
+                            setGraphSettings(newGraphSettings);
+                          }
+                        : undefined
+                    }
+                    onClick={
+                      graphSetting.enable
+                        ? undefined
+                        : () => {
+                            const newGraphSettings = cloneDeep(graphSettings);
+                            newGraphSettings[settingIndex].enable = true;
+                            setGraphSettings(newGraphSettings);
+                          }
+                    }
+                    clickable
+                    style={{
+                      backgroundColor: graphSetting.enable ? purple : undefined,
+                      color: graphSetting.enable ? "white" : undefined,
+                      marginRight: 10,
+                    }}
+                    variant="outlined"
+                    deleteIcon={
+                      <HighlightOffIcon
+                        style={{ color: graphSetting.enable ? "#fff" : "#000" }}
+                      />
+                    }
+                  />
+                )
+              )}
+            </div>
+          </AccordionDetails>
+        </Accordion>
+      }
     </div>
   );
 }
