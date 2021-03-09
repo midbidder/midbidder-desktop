@@ -21,7 +21,8 @@ import {
   Button,
   Chip,
 } from "@material-ui/core";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 
 type BidChoiceDistribution = {
   x: number;
@@ -38,6 +39,8 @@ interface BidChoiceState {
 }
 
 interface StatisticHighlight {
+  label: string;
+  enable?: boolean;
   x?: number;
   x2?: number;
   y?: number;
@@ -46,11 +49,6 @@ interface StatisticHighlight {
   strokeWidth?: number;
   fill: string;
   r?: number;
-}
-
-interface GraphSetting {
-  label: string;
-  enable?: boolean;
 }
 
 const defaultState: BidChoiceState = {
@@ -64,11 +62,11 @@ const defaultState: BidChoiceState = {
 
 const roundingPrecision = 0.00001;
 
-const defaultGraphSettings: GraphSetting[] = [
-  { label: "median" },
-  { label: "mean" },
-  { label: "%25" },
-  { label: "%75" },
+const defaultGraphSettings: StatisticHighlight[] = [
+  { label: "median", stroke: purple, fill: blue },
+  { label: "mean", stroke: purple, fill: blue },
+  { label: "25%", stroke: purple, fill: blue },
+  { label: "75%", stroke: purple, fill: blue },
 ];
 
 const dataValue: BidChoiceDistribution[] = [];
@@ -76,56 +74,56 @@ for (let i = 1; i <= 10; i += 0.1) {
   dataValue.push({ x: i, median: Math.random() });
 }
 
-const testDataStats: StatisticHighlight[] = [
-  // vertical line
-  {
-    x: 3,
-    fill: "#D09",
-    stroke: "#000",
-    strokeWidth: 3,
-  },
-  // horzinotal line
-  {
-    y: 3,
-    fill: "#DA9",
-    stroke: "#000",
-    strokeWidth: 3,
-  },
-  // vertical area
-  {
-    y: 0.2,
-    y2: 0.4,
-    fill: "#AC9",
-    stroke: "#000",
-    strokeWidth: 3,
-  },
-  // horizontal area
-  {
-    x: 2,
-    x2: 4,
-    fill: "#3C9",
-    stroke: "#000",
-    strokeWidth: 3,
-  },
-  // 2d area
-  {
-    x: 3,
-    x2: 4,
-    y: 0.1,
-    y2: 0.4,
-    fill: "#8f0",
-    stroke: "#000",
-    strokeWidth: 3,
-  },
-  // dot
-  {
-    x: 6,
-    y: 0.2,
-    fill: "#506",
-    stroke: "#000",
-    strokeWidth: 3,
-  },
-];
+// const testDataStats: StatisticHighlight[] = [
+//   // vertical line
+//   {
+//     x: 3,
+//     fill: "#D09",
+//     stroke: "#000",
+//     strokeWidth: 3,
+//   },
+//   // horzinotal line
+//   {
+//     y: 3,
+//     fill: "#DA9",
+//     stroke: "#000",
+//     strokeWidth: 3,
+//   },
+//   // vertical area
+//   {
+//     y: 0.2,
+//     y2: 0.4,
+//     fill: "#AC9",
+//     stroke: "#000",
+//     strokeWidth: 3,
+//   },
+//   // horizontal area
+//   {
+//     x: 2,
+//     x2: 4,
+//     fill: "#3C9",
+//     stroke: "#000",
+//     strokeWidth: 3,
+//   },
+//   // 2d area
+//   {
+//     x: 3,
+//     x2: 4,
+//     y: 0.1,
+//     y2: 0.4,
+//     fill: "#8f0",
+//     stroke: "#000",
+//     strokeWidth: 3,
+//   },
+//   // dot
+//   {
+//     x: 6,
+//     y: 0.2,
+//     fill: "#506",
+//     stroke: "#000",
+//     strokeWidth: 3,
+//   },
+// ];
 
 const dataStats: StatisticHighlight[] = [];
 
@@ -174,7 +172,7 @@ function StatFeature(
         strokeOpacity={0.7}
         fill={feature.fill}
         stroke={feature.stroke}
-        strokeWidth={feature.strokeWidth}
+        strokeWidth={feature.strokeWidth || 3}
       />
     );
   }
@@ -189,7 +187,7 @@ function StatFeature(
       <ReferenceLine
         y={feature.y}
         strokeOpacity={0.7}
-        strokeWidth={feature.strokeWidth}
+        strokeWidth={feature.strokeWidth || 3}
         fill={feature.fill}
         stroke={feature.stroke}
         yAxisId="1"
@@ -386,12 +384,10 @@ function BidChoiceGraph() {
                   yAxisId="1"
                   xAxisId="choiceScale"
                 />
-                {dataStats.map((dataStat: StatisticHighlight) => {
-                  return StatFeature(
-                    dataStat,
-                    graphState.left,
-                    graphState.right
-                  );
+                {graphSettings.map((dataStat: StatisticHighlight) => {
+                  return dataStat.enable
+                    ? StatFeature(dataStat, graphState.left, graphState.right)
+                    : undefined;
                 })}
                 {graphState.leftBorder && graphState.rightBorder ? (
                   <ReferenceArea
@@ -454,27 +450,18 @@ function BidChoiceGraph() {
           <AccordionDetails>
             <div style={{ width: "100%" }}>
               {graphSettings.map(
-                (graphSetting: GraphSetting, settingIndex: number) => (
+                (graphSetting: StatisticHighlight, settingIndex: number) => (
                   <Chip
                     label={<BodyText size="xs">{graphSetting.label}</BodyText>}
-                    onDelete={
-                      graphSetting.enable
-                        ? () => {
-                            const newGraphSettings = cloneDeep(graphSettings);
-                            newGraphSettings[settingIndex].enable = false;
-                            setGraphSettings(newGraphSettings);
-                          }
-                        : undefined
-                    }
-                    onClick={
-                      graphSetting.enable
-                        ? undefined
-                        : () => {
-                            const newGraphSettings = cloneDeep(graphSettings);
-                            newGraphSettings[settingIndex].enable = true;
-                            setGraphSettings(newGraphSettings);
-                          }
-                    }
+                    onClick={() => {
+                      const newGraphSettings = cloneDeep(graphSettings);
+                      newGraphSettings[
+                        settingIndex
+                      ].enable = !graphSetting.enable;
+                      // TODO: Calc stats
+                      newGraphSettings[settingIndex].x = Math.random() * 10;
+                      setGraphSettings(newGraphSettings);
+                    }}
                     clickable
                     style={{
                       backgroundColor: graphSetting.enable ? purple : undefined,
@@ -482,10 +469,12 @@ function BidChoiceGraph() {
                       marginRight: 10,
                     }}
                     variant="outlined"
-                    deleteIcon={
-                      <HighlightOffIcon
-                        style={{ color: graphSetting.enable ? "#fff" : "#000" }}
-                      />
+                    icon={
+                      graphSetting.enable ? (
+                        <VisibilityIcon style={{ color: "#fff" }} />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )
                     }
                   />
                 )
