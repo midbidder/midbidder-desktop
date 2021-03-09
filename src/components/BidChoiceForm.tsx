@@ -34,7 +34,10 @@ interface StatisticHighlight {
   x2?: number;
   y?: number;
   y2?: number;
-  color: string;
+  stroke: string;
+  strokeWidth?: number;
+  fill: string;
+  r?: number;
 }
 
 const defaultState: BidChoiceState = {
@@ -57,24 +60,32 @@ const dataStats: StatisticHighlight[] = [
   // vertical line
   {
     x: 3,
-    color: "#D09",
+    fill: "#D09",
+    stroke: "#000",
+    strokeWidth: 3,
   },
   // horzinotal line
   {
     y: 3,
-    color: "#DE9",
+    fill: "#DA9",
+    stroke: "#000",
+    strokeWidth: 3,
   },
   // vertical area
   {
     y: 0.2,
     y2: 0.4,
-    color: "#F00",
+    fill: "#AC9",
+    stroke: "#000",
+    strokeWidth: 3,
   },
   // horizontal area
   {
     x: 2,
     x2: 4,
-    color: "#BA0",
+    fill: "#3C9",
+    stroke: "#000",
+    strokeWidth: 3,
   },
   // 2d area
   {
@@ -82,19 +93,29 @@ const dataStats: StatisticHighlight[] = [
     x2: 4,
     y: 0.1,
     y2: 0.4,
-    color: "#D3E",
+    fill: "#8f0",
+    stroke: "#000",
+    strokeWidth: 3,
   },
   // dot
   {
     x: 6,
     y: 0.2,
-    color: "#ed9",
+    fill: "#506",
+    stroke: "#000",
+    strokeWidth: 3,
   },
 ];
 
-function StatFeature(feature: StatisticHighlight, leftBorder: number | string, rightBorder: number | string) {
-  const left = typeof(leftBorder) === "number" ? leftBorder as number : undefined;
-  const right = typeof(rightBorder) === "number" ? rightBorder as number : undefined;
+function StatFeature(
+  feature: StatisticHighlight,
+  leftBorder: number | string,
+  rightBorder: number | string
+) {
+  const left =
+    typeof leftBorder === "number" ? (leftBorder as number) : undefined;
+  const right =
+    typeof rightBorder === "number" ? (rightBorder as number) : undefined;
 
   // dot
   if (
@@ -103,7 +124,18 @@ function StatFeature(feature: StatisticHighlight, leftBorder: number | string, r
     feature.x2 === undefined &&
     feature.y2 === undefined
   ) {
-    <ReferenceDot x={feature.x} y={feature.y} />;
+    return (
+      <ReferenceDot
+        yAxisId="1"
+        xAxisId="choiceScale"
+        x={feature.x}
+        y={feature.y}
+        fill={feature.fill}
+        stroke={feature.stroke}
+        strokeWidth={feature.strokeWidth}
+        r={feature.r || 5}
+      />
+    );
   }
   // x line
   else if (
@@ -118,7 +150,9 @@ function StatFeature(feature: StatisticHighlight, leftBorder: number | string, r
         xAxisId="choiceScale"
         x={feature.x}
         strokeOpacity={0.7}
-        stroke={feature.color}
+        fill={feature.fill}
+        stroke={feature.stroke}
+        strokeWidth={feature.strokeWidth}
       />
     );
   }
@@ -133,7 +167,9 @@ function StatFeature(feature: StatisticHighlight, leftBorder: number | string, r
       <ReferenceLine
         y={feature.y}
         strokeOpacity={0.7}
-        stroke={feature.color}
+        strokeWidth={feature.strokeWidth}
+        fill={feature.fill}
+        stroke={feature.stroke}
         yAxisId="1"
         xAxisId="choiceScale"
       />
@@ -153,8 +189,9 @@ function StatFeature(feature: StatisticHighlight, leftBorder: number | string, r
         x1={left ? Math.max(left, feature.x) : feature.x}
         x2={right ? Math.min(right, feature.x2) : feature.x2}
         strokeOpacity={0.7}
-        stroke={purple}
-        fill={feature.color}
+        fill={feature.fill}
+        stroke={feature.stroke}
+        strokeWidth={feature.strokeWidth}
       />
     );
   }
@@ -172,8 +209,9 @@ function StatFeature(feature: StatisticHighlight, leftBorder: number | string, r
         y1={feature.y}
         y2={feature.y2}
         strokeOpacity={0.7}
-        stroke={purple}
-        fill={feature.color}
+        fill={feature.fill}
+        stroke={feature.stroke}
+        strokeWidth={feature.strokeWidth}
       />
     );
   } else if (
@@ -191,8 +229,9 @@ function StatFeature(feature: StatisticHighlight, leftBorder: number | string, r
         y1={feature.y}
         y2={feature.y2}
         strokeOpacity={0.7}
-        stroke={purple}
-        fill={feature.color}
+        fill={feature.fill}
+        stroke={feature.stroke}
+        strokeWidth={feature.strokeWidth}
       />
     );
   }
@@ -203,12 +242,7 @@ function BidChoiceGraph() {
   const [data, setData] = useState(dataValue);
   const [graphState, setGraphState] = useState(defaultState);
 
-  const getAxisYDomain = (
-    from: number,
-    to: number,
-    ref: string,
-    offset: number
-  ) => {
+  const getAxisYDomain = (from: number, to: number, ref: string) => {
     const refData: any[] = data.slice(from - 1, to);
     let [bottom, top] = [refData[0][ref], refData[0][ref]];
     // find min and max
@@ -217,7 +251,7 @@ function BidChoiceGraph() {
       if (d[ref] < bottom) bottom = d[ref];
     });
 
-    return [(bottom | 0) - offset, (top | 0) + offset];
+    return [bottom | 0, (top | 0) + 1];
   };
 
   const zoomOut = () => {
@@ -243,8 +277,7 @@ function BidChoiceGraph() {
     const [bottom, top] = getAxisYDomain(
       leftBorder === "" ? 0 : (leftBorder as number),
       rightBorder === "" ? 0 : (rightBorder as number),
-      "median",
-      1
+      "median"
     );
     setGraphState({
       leftBorder: "",
@@ -255,7 +288,6 @@ function BidChoiceGraph() {
       top,
     });
   };
-  console.log(graphState)
   return (
     <div style={{ width: "100%", height: "100%", userSelect: "none" }}>
       <ContainerDimensions>
@@ -330,7 +362,11 @@ function BidChoiceGraph() {
                   xAxisId="choiceScale"
                 />
                 {dataStats.map((dataStat: StatisticHighlight) => {
-                  return StatFeature(dataStat, graphState.left, graphState.right);
+                  return StatFeature(
+                    dataStat,
+                    graphState.left,
+                    graphState.right
+                  );
                 })}
                 {graphState.leftBorder && graphState.rightBorder ? (
                   <ReferenceArea
@@ -348,6 +384,16 @@ function BidChoiceGraph() {
           );
         }}
       </ContainerDimensions>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-around",
+        }}
+      >
+        <span onClick={() => zoomOut()}>Reset Zoom</span>
+        <span>graph config</span>
+      </div>
     </div>
   );
 }
@@ -372,16 +418,6 @@ export function BidChoiceForm() {
         </TitleText>
       </div>
       <BidChoiceGraph />
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "space-around",
-        }}
-      >
-        <span>Reset Zoom</span>
-        <span>graph config</span>
-      </div>
     </div>
   );
 }
