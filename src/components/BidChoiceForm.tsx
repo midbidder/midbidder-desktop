@@ -14,6 +14,7 @@ import {
   ReferenceDot,
 } from "recharts";
 import ContainerDimensions from "react-container-dimensions";
+import { Button } from "@material-ui/core";
 
 type BidChoiceDistribution = {
   x: number;
@@ -56,7 +57,7 @@ for (let i = 1; i <= 10; i += 0.1) {
   dataValue.push({ x: i, median: Math.random() });
 }
 
-const dataStats: StatisticHighlight[] = [
+const testDataStats: StatisticHighlight[] = [
   // vertical line
   {
     x: 3,
@@ -106,6 +107,8 @@ const dataStats: StatisticHighlight[] = [
     strokeWidth: 3,
   },
 ];
+
+const dataStats: StatisticHighlight[] = [];
 
 function StatFeature(
   feature: StatisticHighlight,
@@ -391,8 +394,43 @@ function BidChoiceGraph() {
           justifyContent: "space-around",
         }}
       >
-        <span onClick={() => zoomOut()}>Reset Zoom</span>
-        <span>graph config</span>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "space-between",
+          }}
+        >
+          <Button
+            style={{
+              height: 40,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: purple,
+              textTransform: "none",
+              flexGrow: 1,
+            }}
+            onClick={() => zoomOut()}
+          >
+            <BodyText size="xs">reset zoom</BodyText>
+          </Button>
+          <div style={{ flexGrow: 1 }} />
+          <Button
+            style={{
+              height: 40,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: purple,
+              textTransform: "none",
+              flexGrow: 1,
+            }}
+            onClick={() => zoomOut()}
+          >
+            <BodyText size="xs">graph config</BodyText>
+          </Button>
+        </div>
       </div>
     </div>
   );
