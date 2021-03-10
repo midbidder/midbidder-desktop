@@ -1,5 +1,6 @@
+import { Button } from "@material-ui/core";
 import React, { useContext } from "react";
-import { Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { DropdownButton, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { AuthContext } from "../contexts/AuthContext";
 import { blue, purple } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
@@ -35,32 +36,40 @@ export default function NavBar(props: NavBarProps) {
             justifyContent: "flex-end",
           }}
         >
+          <Button
+            style={{
+              textTransform: "none",
+              backgroundColor: blue,
+              color: "#fff",
+            }}
+          >
+            <BodyText>sign up</BodyText>
+          </Button>
+          <div style={{ width: 10, height: 10 }} />
+          <Button
+            style={{
+              textTransform: "none",
+              color: blue,
+              border: `1px solid ${blue}`,
+              backgroundColor: "transparent",
+            }}
+          >
+            <BodyText>sign in</BodyText>
+          </Button>
           {props.siteMap
             .filter((tabSetting: SiteMapping) => tabSetting.tab)
             .map((tabSetting: SiteMapping, index: number) => (
-              <Nav.Link key={`${index}-navlink`} href={tabSetting.route}>
+              <Button
+                style={{
+                  textTransform: "none",
+                  backgroundColor: purple,
+                  color: "#000",
+                }}
+                href={tabSetting.route}
+              >
                 <BodyText>{tabSetting.title}</BodyText>
-              </Nav.Link>
+              </Button>
             ))}
-          {/* FIXME: Replace with a component with better dropdown mechanics & easier styling. */}
-          <NavDropdown
-            title={<BodyText>profile</BodyText>}
-            id="basic-nav-dropdown"
-          >
-            <NavDropdown.Item href="/settings">
-              <Nav.Link key="settings-navlink" href="/settings">
-                <BodyText>settings</BodyText>
-              </Nav.Link>
-            </NavDropdown.Item>
-
-            <NavDropdown.Divider />
-            <NavDropdown.Item href="/signin">
-              <BodyText>sign in</BodyText>
-            </NavDropdown.Item>
-            <NavDropdown.Item href="/signup">
-              <BodyText>sign up</BodyText>
-            </NavDropdown.Item>
-          </NavDropdown>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
