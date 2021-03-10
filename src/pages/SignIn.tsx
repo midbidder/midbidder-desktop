@@ -5,10 +5,7 @@ import {
   GoogleLoginResponseOffline,
 } from "react-google-login";
 import { keyInObject } from "../util/General";
-import {
-  styleLoginButton,
-  styleLoginButtonHover,
-} from "../styles/SignInStyles";
+import { styleLoginButton } from "../styles/SignInStyles";
 import { BodyText, TitleText } from "../components/Text";
 import Button from "@material-ui/core/Button";
 import { blue } from "../styles/GlobalStyles";
@@ -23,9 +20,7 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
     // TODO: database stuff here. Check if account exists. If not, create account.
   };
   const failureCallback = (response: GoogleLoginResponse) => {
-    console.log("c--------------");
   };
-  const [buttonHover, setButtonHover] = useState(false);
   return (
     <div>
       <GoogleLogin
@@ -38,13 +33,7 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
             <Button
               onClick={buttonProps.onClick}
               disabled={buttonProps.disabled}
-              onMouseOver={() => {
-                setButtonHover(true);
-              }}
-              onMouseLeave={() => {
-                setButtonHover(false);
-              }}
-              style={buttonHover ? styleLoginButtonHover : styleLoginButton}
+              style={styleLoginButton}
             >
               {signInProps.signUp ? "sign up" : "sign in"} with google
             </Button>

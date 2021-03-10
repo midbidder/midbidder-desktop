@@ -42,6 +42,7 @@ export default function NavBar(props: NavBarProps) {
               backgroundColor: blue,
               color: "#fff",
             }}
+            href={"/signin"}
           >
             <BodyText>sign up</BodyText>
           </Button>
@@ -53,6 +54,7 @@ export default function NavBar(props: NavBarProps) {
               border: `1px solid ${blue}`,
               backgroundColor: "transparent",
             }}
+            href={"/signup"}
           >
             <BodyText>sign in</BodyText>
           </Button>
