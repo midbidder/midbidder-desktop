@@ -32,7 +32,7 @@ interface BidChoiceDistribution {
 /**
  * @type StatisticCalculation
  * @description Can be used in the future for users to self-program new statistical annotations.
- * @todo Implement this feature.
+ * @todo Implement this feature. Likely to deprecate, but screw it.
  */
 type StatisticCalculation = (inputData: BidChoiceDistribution[]) => number;
 
@@ -97,8 +97,8 @@ interface BidChoiceState {
 const defaultState: BidChoiceState = {
   left: "dataMin",
   right: "dataMax",
-  bottom: "dataMin",
-  top: "dataMax",
+  bottom: 0,
+  top: 1,
   leftBorder: "",
   rightBorder: "",
 };
@@ -114,7 +114,7 @@ const roundingPrecision = 0.00001;
  * @todo Replace coordinates with values recieved from the server.
  * @todo Eventually replace user preferences from database.
  */
-const defaultGraphSettings: StatisticHighlight[] = [
+const defaultGraphStatistics: StatisticHighlight[] = [
   { label: "median", stroke: purple, fill: blue, x: Math.random() * 10 },
   { label: "mean", stroke: purple, fill: blue, x: Math.random() * 10 },
   { label: "25%", stroke: purple, fill: blue, x: Math.random() * 10 },
@@ -130,6 +130,12 @@ for (let i = 1; i <= 10; i += 0.1) {
   dataValue.push({ x: i, freq: Math.random() });
 }
 
+/**
+ * @description Disambiguates a given statistic
+ * @param input undefined, a number, or an algoritm to create a statistics.
+ * @param dist Array representing bid choice representation
+ * @returns a number or undefined
+ */
 function processStat(
   input: undefined | StatisticCalculation | number,
   dist: BidChoiceDistribution[]
@@ -141,23 +147,34 @@ function processStat(
     : (input as StatisticCalculation)(dist);
 }
 
+/**
+ *
+ * @param feature a given statistic to be highlighted
+ * @param leftBorder left border of graph
+ * @param rightBorder right border of graph
+ * @param dist array representing bid choice representation
+ * @returns a graph element highlighting an area of a graph
+ */
 function StatFeature(
   feature: StatisticHighlight,
   leftBorder: number | string,
   rightBorder: number | string,
   dist: BidChoiceDistribution[]
 ) {
+  // left border for graph
   const left =
     typeof leftBorder === "number" ? (leftBorder as number) : undefined;
+  // right border for graph
   const right =
     typeof rightBorder === "number" ? (rightBorder as number) : undefined;
 
+  // Calculate all coordinates
   const x = processStat(feature.x, dist);
   const x2 = processStat(feature.y, dist);
   const y = processStat(feature.y, dist);
   const y2 = processStat(feature.y2, dist);
 
-  // dot
+  // produces a dot
   if (
     x !== undefined &&
     y !== undefined &&
@@ -177,7 +194,7 @@ function StatFeature(
       />
     );
   }
-  // x line
+  // produces a vertical line
   else if (
     x !== undefined &&
     x2 === undefined &&
@@ -196,7 +213,7 @@ function StatFeature(
       />
     );
   }
-  // y line
+  // produces a horizontal line
   else if (
     x === undefined &&
     x2 === undefined &&
@@ -215,7 +232,7 @@ function StatFeature(
       />
     );
   }
-  // x range
+  // produces a horizontal slice
   else if (
     x !== undefined &&
     x2 !== undefined &&
@@ -235,7 +252,7 @@ function StatFeature(
       />
     );
   }
-  // y range
+  // produces a vertical slice
   else if (
     x === undefined &&
     x2 === undefined &&
@@ -254,7 +271,9 @@ function StatFeature(
         strokeWidth={feature.strokeWidth}
       />
     );
-  } else if (
+  }
+  // produces a 2D slice
+  else if (
     x !== undefined &&
     x2 !== undefined &&
     y !== undefined &&
@@ -278,57 +297,50 @@ function StatFeature(
   return undefined;
 }
 
+/**
+ * @returns a graph with configuration buttons
+ */
 function BidChoiceGraph() {
+  // TODO: will get this from server
   const [data, setData] = useState(dataValue);
+  // TODO: will get this from the server
+  const [graphStatistics, setGraphStatistics] = useState(
+    defaultGraphStatistics
+  );
+  // whether the configuration panel is expanded
   const [configExpanded, setConfigExpanded] = useState(false);
+  // represents the graph's states
   const [graphState, setGraphState] = useState(defaultState);
-  const [graphSettings, setGraphSettings] = useState(defaultGraphSettings);
-  const getAxisYDomain = (from: number, to: number, ref: string) => {
-    const refData: any[] = data.slice(from - 1, to);
-    let [bottom, top] = [refData[0][ref], refData[0][ref]];
-    // find min and max
-    refData.forEach((d) => {
-      if (d[ref] > top) top = d[ref];
-      if (d[ref] < bottom) bottom = d[ref];
-    });
-
-    return [bottom | 0, (top | 0) + 1];
-  };
-
+  // zooms out to default zoom parameters
   const zoomOut = () => {
     setGraphState(defaultState);
   };
-
+  // zooms to a given interval on [leftBorder, rightBorder]
   const zoom = () => {
     let leftBorder = graphState.leftBorder;
     let rightBorder = graphState.rightBorder;
-    const oldState = cloneDeep(graphState);
-    oldState.leftBorder = "";
-    oldState.rightBorder = "";
+    const newState = cloneDeep(graphState);
+    newState.leftBorder = "";
+    newState.rightBorder = "";
     // 0 width slice clears selection and does nothing else.
     if (leftBorder === rightBorder || rightBorder === "") {
-      setGraphState(oldState);
+      setGraphState(newState);
       return;
     }
     // ensure x selection is not flipped
     if (leftBorder && leftBorder > rightBorder!)
       [leftBorder, rightBorder] = [rightBorder, leftBorder];
-
-    // get the bottom & top (adjusted for min & max of selection)
-    const [bottom, top] = getAxisYDomain(
-      leftBorder === "" ? 0 : (leftBorder as number),
-      rightBorder === "" ? 0 : (rightBorder as number),
-      "freq"
-    );
+    // sets border to selected region. TODO: Possibly adjust bottom/top
     setGraphState({
       leftBorder: "",
       rightBorder: "",
       left: leftBorder,
       right: rightBorder,
-      bottom,
-      top,
+      bottom: 0,
+      top: 1,
     });
   };
+
   return (
     <div style={{ width: "100%", height: "100%", userSelect: "none" }}>
       <ContainerDimensions>
@@ -341,16 +353,16 @@ function BidChoiceGraph() {
                 height={height}
                 onMouseDown={(e: any) => {
                   if (!e) return;
-                  const oldState = cloneDeep(graphState);
-                  oldState.leftBorder = e.activeLabel;
-                  setGraphState(oldState);
+                  const newState = cloneDeep(graphState);
+                  newState.leftBorder = e.activeLabel;
+                  setGraphState(newState);
                 }}
                 onMouseMove={(e: any) => {
                   if (!e) return;
                   if (graphState.leftBorder) {
-                    const oldState = cloneDeep(graphState);
-                    oldState.rightBorder = e.activeLabel;
-                    setGraphState(oldState);
+                    const newState = cloneDeep(graphState);
+                    newState.rightBorder = e.activeLabel;
+                    setGraphState(newState);
                   }
                 }}
                 onMouseUp={() => {
@@ -404,7 +416,7 @@ function BidChoiceGraph() {
                   yAxisId="1"
                   xAxisId="choiceScale"
                 />
-                {graphSettings.map((dataStat: StatisticHighlight) => {
+                {graphStatistics.map((dataStat: StatisticHighlight) => {
                   return dataStat.enable
                     ? StatFeature(
                         dataStat,
@@ -480,24 +492,26 @@ function BidChoiceGraph() {
       >
         <BodyText>graph configuration</BodyText>
         <div style={{ width: "100%" }}>
-          {graphSettings.map(
-            (graphSetting: StatisticHighlight, settingIndex: number) => (
+          {graphStatistics.map(
+            (graphStatistic: StatisticHighlight, settingIndex: number) => (
               <Chip
-                label={<BodyText size="xs">{graphSetting.label}</BodyText>}
+                label={<BodyText size="xs">{graphStatistic.label}</BodyText>}
                 onClick={() => {
-                  const newGraphSettings = cloneDeep(graphSettings);
-                  newGraphSettings[settingIndex].enable = !graphSetting.enable;
-                  setGraphSettings(newGraphSettings);
+                  const newGraphStatistics = cloneDeep(graphStatistics);
+                  newGraphStatistics[
+                    settingIndex
+                  ].enable = !graphStatistic.enable;
+                  setGraphStatistics(newGraphStatistics);
                 }}
                 clickable
                 style={{
-                  backgroundColor: graphSetting.enable ? purple : undefined,
-                  color: graphSetting.enable ? "white" : undefined,
+                  backgroundColor: graphStatistic.enable ? purple : undefined,
+                  color: graphStatistic.enable ? "white" : undefined,
                   marginRight: 10,
                 }}
                 variant="outlined"
                 icon={
-                  graphSetting.enable ? (
+                  graphStatistic.enable ? (
                     <VisibilityIcon style={{ color: "#fff" }} />
                   ) : (
                     <VisibilityOffIcon />
@@ -512,6 +526,9 @@ function BidChoiceGraph() {
   );
 }
 
+/**
+ * @returns a form to submit a bid choice
+ */
 export function BidChoiceForm() {
   return (
     <div
