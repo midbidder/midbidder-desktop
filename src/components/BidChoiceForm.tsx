@@ -18,13 +18,39 @@ import { Button, Chip } from "@material-ui/core";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 
+/**
+ * @interface BidChoiceDistribution
+ * @description Represents the distribution of each choice.
+ * @property x: Any given floating point bid on.
+ * @property freq: Relative distribution of choice [0, 1]
+ */
 interface BidChoiceDistribution {
   x: number;
   freq: number;
 }
 
+/**
+ * @type StatisticCalculation
+ * @description Can be used in the future for users to self-program new statistical annotations.
+ * @todo Implement this feature.
+ */
 type StatisticCalculation = (inputData: BidChoiceDistribution[]) => number;
 
+/**
+ * @interface StatisticHighlight
+ * @description Carries necessary information to highlight a statistically relevant area on the graph.
+ * @summary
+ * Only defined x -> vertical line
+ * Only defined y -> horizontal line
+ * Only defined x, x2 -> Horizontal slice
+ * Only defined y, y2 -> Vertical slice
+ * Defined x, x2, y, y2 -> 2D slice
+ * else no component will be generated
+ * @property label - describes statistic
+ * @property enable - whether statistic is shown
+ * @property x - x position.
+ *
+ */
 interface StatisticHighlight {
   label: string;
   enable?: boolean;
@@ -38,6 +64,19 @@ interface StatisticHighlight {
   r?: number;
 }
 
+/**
+ * @interface BidChoiceState
+ * @description Represents the state of the graph.
+ * @property left - left view of the graph
+ * @property right - right view of the graph
+ * @property top - top view of the graph
+ * @property bottom - bottom view of the graph
+ * @property leftBorder - left border of the graph selector
+ * @property rightBorder - right border of the graph selector
+ * On left/right/bottom/top, the below are arguments are also possible
+ * @argument dataMin - minimum of data on dimension
+ * @argument dataMax - maximum of data on dimension
+ */
 interface BidChoiceState {
   left: number | string;
   right: number | string;
@@ -50,6 +89,11 @@ interface BidChoiceState {
 /**
  * ------------------ Constants and Defaults ------------------
  */
+
+/**
+ * @description default state of the graph
+ * @todo Eventually scrape user preferences from the database.
+ */
 const defaultState: BidChoiceState = {
   left: "dataMin",
   right: "dataMax",
@@ -59,9 +103,17 @@ const defaultState: BidChoiceState = {
   rightBorder: "",
 };
 
+/**
+ * @description precision to round with to in order to avoid floating point rounding errors.
+ * @todo Eventually eliminate once backend is connected and rounding errors are not present.
+ */
 const roundingPrecision = 0.00001;
 
-// TODO: Will eventually import stats from server
+/**
+ * @description the default settings for the highlighted statistics
+ * @todo Replace coordinates with values recieved from the server.
+ * @todo Eventually replace user preferences from database.
+ */
 const defaultGraphSettings: StatisticHighlight[] = [
   { label: "median", stroke: purple, fill: blue, x: Math.random() * 10 },
   { label: "mean", stroke: purple, fill: blue, x: Math.random() * 10 },
@@ -69,6 +121,10 @@ const defaultGraphSettings: StatisticHighlight[] = [
   { label: "75%", stroke: purple, fill: blue, x: Math.random() * 10 },
 ];
 
+/**
+ * @description Generates mock data
+ * @todo eventually get from server
+ */
 const dataValue: BidChoiceDistribution[] = [];
 for (let i = 1; i <= 10; i += 0.1) {
   dataValue.push({ x: i, freq: Math.random() });
