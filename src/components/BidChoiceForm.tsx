@@ -14,20 +14,29 @@ import {
   ReferenceDot,
 } from "recharts";
 import ContainerDimensions from "react-container-dimensions";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Button,
-  Chip,
-} from "@material-ui/core";
+import { Button, Chip } from "@material-ui/core";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 
-type BidChoiceDistribution = {
+interface BidChoiceDistribution {
   x: number;
-  median: number;
-};
+  freq: number;
+}
+
+type StatisticCalculation = (inputData: BidChoiceDistribution[]) => number;
+
+interface StatisticHighlight {
+  label: string;
+  enable?: boolean;
+  x?: number | StatisticCalculation;
+  x2?: number | StatisticCalculation;
+  y?: number | StatisticCalculation;
+  y2?: number | StatisticCalculation;
+  stroke: string;
+  strokeWidth?: number;
+  fill: string;
+  r?: number;
+}
 
 interface BidChoiceState {
   left: number | string;
@@ -38,19 +47,9 @@ interface BidChoiceState {
   rightBorder: number | string;
 }
 
-interface StatisticHighlight {
-  label: string;
-  enable?: boolean;
-  x?: number;
-  x2?: number;
-  y?: number;
-  y2?: number;
-  stroke: string;
-  strokeWidth?: number;
-  fill: string;
-  r?: number;
-}
-
+/**
+ * ------------------ Constants and Defaults ------------------
+ */
 const defaultState: BidChoiceState = {
   left: "dataMin",
   right: "dataMax",
@@ -62,94 +61,59 @@ const defaultState: BidChoiceState = {
 
 const roundingPrecision = 0.00001;
 
+// TODO: Will eventually import stats from server
 const defaultGraphSettings: StatisticHighlight[] = [
-  { label: "median", stroke: purple, fill: blue },
-  { label: "mean", stroke: purple, fill: blue },
-  { label: "25%", stroke: purple, fill: blue },
-  { label: "75%", stroke: purple, fill: blue },
+  { label: "median", stroke: purple, fill: blue, x: Math.random() * 10 },
+  { label: "mean", stroke: purple, fill: blue, x: Math.random() * 10 },
+  { label: "25%", stroke: purple, fill: blue, x: Math.random() * 10 },
+  { label: "75%", stroke: purple, fill: blue, x: Math.random() * 10 },
 ];
 
 const dataValue: BidChoiceDistribution[] = [];
 for (let i = 1; i <= 10; i += 0.1) {
-  dataValue.push({ x: i, median: Math.random() });
+  dataValue.push({ x: i, freq: Math.random() });
 }
 
-// const testDataStats: StatisticHighlight[] = [
-//   // vertical line
-//   {
-//     x: 3,
-//     fill: "#D09",
-//     stroke: "#000",
-//     strokeWidth: 3,
-//   },
-//   // horzinotal line
-//   {
-//     y: 3,
-//     fill: "#DA9",
-//     stroke: "#000",
-//     strokeWidth: 3,
-//   },
-//   // vertical area
-//   {
-//     y: 0.2,
-//     y2: 0.4,
-//     fill: "#AC9",
-//     stroke: "#000",
-//     strokeWidth: 3,
-//   },
-//   // horizontal area
-//   {
-//     x: 2,
-//     x2: 4,
-//     fill: "#3C9",
-//     stroke: "#000",
-//     strokeWidth: 3,
-//   },
-//   // 2d area
-//   {
-//     x: 3,
-//     x2: 4,
-//     y: 0.1,
-//     y2: 0.4,
-//     fill: "#8f0",
-//     stroke: "#000",
-//     strokeWidth: 3,
-//   },
-//   // dot
-//   {
-//     x: 6,
-//     y: 0.2,
-//     fill: "#506",
-//     stroke: "#000",
-//     strokeWidth: 3,
-//   },
-// ];
-
-const dataStats: StatisticHighlight[] = [];
+function processStat(
+  input: undefined | StatisticCalculation | number,
+  dist: BidChoiceDistribution[]
+) {
+  return input === undefined
+    ? undefined
+    : typeof input === "number"
+    ? (input as number)
+    : (input as StatisticCalculation)(dist);
+}
 
 function StatFeature(
   feature: StatisticHighlight,
   leftBorder: number | string,
-  rightBorder: number | string
+  rightBorder: number | string,
+  dist: BidChoiceDistribution[]
 ) {
   const left =
     typeof leftBorder === "number" ? (leftBorder as number) : undefined;
   const right =
     typeof rightBorder === "number" ? (rightBorder as number) : undefined;
 
+  const x = processStat(feature.x, dist);
+  const x2 = processStat(feature.y, dist);
+  const y = processStat(feature.y, dist);
+  const y2 = processStat(feature.y2, dist);
+
   // dot
   if (
-    feature.x !== undefined &&
-    feature.y !== undefined &&
-    feature.x2 === undefined &&
-    feature.y2 === undefined
+    x !== undefined &&
+    y !== undefined &&
+    x2 === undefined &&
+    y2 === undefined
   ) {
     return (
       <ReferenceDot
         yAxisId="1"
         xAxisId="choiceScale"
-        x={feature.x}
-        y={feature.y}
+        x={x}
+        y={y}
         fill={feature.fill}
         stroke={feature.stroke}
         strokeWidth={feature.strokeWidth}
@@ -159,16 +123,16 @@ function StatFeature(
   }
   // x line
   else if (
-    feature.x !== undefined &&
-    feature.x2 === undefined &&
-    feature.y === undefined &&
-    feature.y2 === undefined
+    x !== undefined &&
+    x2 === undefined &&
+    y === undefined &&
+    y2 === undefined
   ) {
     return (
       <ReferenceLine
         yAxisId="1"
         xAxisId="choiceScale"
-        x={feature.x}
+        x={x}
         strokeOpacity={0.7}
         fill={feature.fill}
         stroke={feature.stroke}
@@ -178,14 +142,14 @@ function StatFeature(
   }
   // y line
   else if (
-    feature.x === undefined &&
-    feature.x2 === undefined &&
-    feature.y !== undefined &&
-    feature.y2 === undefined
+    x === undefined &&
+    x2 === undefined &&
+    y !== undefined &&
+    y2 === undefined
   ) {
     return (
       <ReferenceLine
-        y={feature.y}
+        y={y}
         strokeOpacity={0.7}
         strokeWidth={feature.strokeWidth || 3}
         fill={feature.fill}
@@ -197,17 +161,17 @@ function StatFeature(
   }
   // x range
   else if (
-    feature.x !== undefined &&
-    feature.x2 !== undefined &&
-    feature.y === undefined &&
-    feature.y2 === undefined
+    x !== undefined &&
+    x2 !== undefined &&
+    y === undefined &&
+    y2 === undefined
   ) {
     return (
       <ReferenceArea
         yAxisId="1"
         xAxisId="choiceScale"
-        x1={left ? Math.max(left, feature.x) : feature.x}
-        x2={right ? Math.min(right, feature.x2) : feature.x2}
+        x1={left ? Math.max(left, x) : x}
+        x2={right ? Math.min(right, x2) : x2}
         strokeOpacity={0.7}
         fill={feature.fill}
         stroke={feature.stroke}
@@ -217,17 +181,17 @@ function StatFeature(
   }
   // y range
   else if (
-    feature.x === undefined &&
-    feature.x2 === undefined &&
-    feature.y !== undefined &&
-    feature.y2 !== undefined
+    x === undefined &&
+    x2 === undefined &&
+    y !== undefined &&
+    y2 !== undefined
   ) {
     return (
       <ReferenceArea
         yAxisId="1"
         xAxisId="choiceScale"
-        y1={feature.y}
-        y2={feature.y2}
+        y1={y}
+        y2={y2}
         strokeOpacity={0.7}
         fill={feature.fill}
         stroke={feature.stroke}
@@ -235,19 +199,19 @@ function StatFeature(
       />
     );
   } else if (
-    feature.x !== undefined &&
-    feature.x2 !== undefined &&
-    feature.y !== undefined &&
-    feature.y2 !== undefined
+    x !== undefined &&
+    x2 !== undefined &&
+    y !== undefined &&
+    y2 !== undefined
   ) {
     return (
       <ReferenceArea
         yAxisId="1"
         xAxisId="choiceScale"
-        x1={left ? Math.max(left, feature.x) : feature.x}
-        x2={right ? Math.min(right, feature.x2) : feature.x2}
-        y1={feature.y}
-        y2={feature.y2}
+        x1={left ? Math.max(left, x) : x}
+        x2={right ? Math.min(right, x2) : x2}
+        y1={y}
+        y2={y2}
         strokeOpacity={0.7}
         fill={feature.fill}
         stroke={feature.stroke}
@@ -298,7 +262,7 @@ function BidChoiceGraph() {
     const [bottom, top] = getAxisYDomain(
       leftBorder === "" ? 0 : (leftBorder as number),
       rightBorder === "" ? 0 : (rightBorder as number),
-      "median"
+      "freq"
     );
     setGraphState({
       leftBorder: "",
@@ -343,7 +307,7 @@ function BidChoiceGraph() {
                   dataKey="x"
                   type="number"
                   domain={[graphState.left, graphState.right]}
-                  stroke={purple}
+                  stroke={"#0"}
                   tickFormatter={(value: any) => {
                     const tickValue = value as number;
                     const roundTickValue = Math.round(tickValue);
@@ -361,9 +325,9 @@ function BidChoiceGraph() {
                   allowDataOverflow
                   type="number"
                   domain={[graphState.bottom, graphState.top]}
-                  stroke={purple}
+                  stroke={"#0"}
                   yAxisId="1"
-                  dataKey={"median"}
+                  dataKey={"freq"}
                   tickFormatter={(value: any) => {
                     return (value as number).toFixed(2);
                   }}
@@ -378,7 +342,7 @@ function BidChoiceGraph() {
                 />
                 <Line
                   type="stepAfter"
-                  dataKey={"median"}
+                  dataKey={"freq"}
                   stroke={blue}
                   animationDuration={500}
                   yAxisId="1"
@@ -386,7 +350,12 @@ function BidChoiceGraph() {
                 />
                 {graphSettings.map((dataStat: StatisticHighlight) => {
                   return dataStat.enable
-                    ? StatFeature(dataStat, graphState.left, graphState.right)
+                    ? StatFeature(
+                        dataStat,
+                        graphState.left,
+                        graphState.right,
+                        data
+                      )
                     : undefined;
                 })}
                 {graphState.leftBorder && graphState.rightBorder ? (
@@ -418,13 +387,15 @@ function BidChoiceGraph() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: purple,
+            backgroundColor: blue,
             textTransform: "none",
             flexGrow: 1,
           }}
           onClick={() => zoomOut()}
         >
-          <BodyText size="s">reset zoom</BodyText>
+          <BodyText color="white" size="s">
+            reset zoom
+          </BodyText>
         </Button>
         <div style={{ flexGrow: 1 }} />
         <Button
@@ -433,56 +404,54 @@ function BidChoiceGraph() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: purple,
+            backgroundColor: blue,
             textTransform: "none",
             flexGrow: 1,
           }}
           onClick={() => setConfigExpanded(!configExpanded)}
         >
-          <BodyText size="s">graph config</BodyText>
+          <BodyText color="white" size="s">
+            graph config
+          </BodyText>
         </Button>
       </div>
-      {
-        <Accordion style={{ boxShadow: "none" }} expanded={configExpanded}>
-          <AccordionSummary>
-            {configExpanded && <BodyText>graph configuration</BodyText>}
-          </AccordionSummary>
-          <AccordionDetails>
-            <div style={{ width: "100%" }}>
-              {graphSettings.map(
-                (graphSetting: StatisticHighlight, settingIndex: number) => (
-                  <Chip
-                    label={<BodyText size="xs">{graphSetting.label}</BodyText>}
-                    onClick={() => {
-                      const newGraphSettings = cloneDeep(graphSettings);
-                      newGraphSettings[
-                        settingIndex
-                      ].enable = !graphSetting.enable;
-                      // TODO: Calc stats
-                      newGraphSettings[settingIndex].x = Math.random() * 10;
-                      setGraphSettings(newGraphSettings);
-                    }}
-                    clickable
-                    style={{
-                      backgroundColor: graphSetting.enable ? purple : undefined,
-                      color: graphSetting.enable ? "white" : undefined,
-                      marginRight: 10,
-                    }}
-                    variant="outlined"
-                    icon={
-                      graphSetting.enable ? (
-                        <VisibilityIcon style={{ color: "#fff" }} />
-                      ) : (
-                        <VisibilityOffIcon />
-                      )
-                    }
-                  />
-                )
-              )}
-            </div>
-          </AccordionDetails>
-        </Accordion>
-      }
+      <div
+        style={{
+          maxHeight: configExpanded ? "100%" : "0%",
+          overflow: "hidden",
+          transition: "0.5s",
+        }}
+      >
+        <BodyText>graph configuration</BodyText>
+        <div style={{ width: "100%" }}>
+          {graphSettings.map(
+            (graphSetting: StatisticHighlight, settingIndex: number) => (
+              <Chip
+                label={<BodyText size="xs">{graphSetting.label}</BodyText>}
+                onClick={() => {
+                  const newGraphSettings = cloneDeep(graphSettings);
+                  newGraphSettings[settingIndex].enable = !graphSetting.enable;
+                  setGraphSettings(newGraphSettings);
+                }}
+                clickable
+                style={{
+                  backgroundColor: graphSetting.enable ? purple : undefined,
+                  color: graphSetting.enable ? "white" : undefined,
+                  marginRight: 10,
+                }}
+                variant="outlined"
+                icon={
+                  graphSetting.enable ? (
+                    <VisibilityIcon style={{ color: "#fff" }} />
+                  ) : (
+                    <VisibilityOffIcon />
+                  )
+                }
+              />
+            )
+          )}
+        </div>
+      </div>
     </div>
   );
 }
