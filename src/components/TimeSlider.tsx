@@ -70,6 +70,7 @@ export default function TimeSlider() {
         step={1}
         marks
         defaultValue={10}
+        style={{ marginBottom: 20 }}
       />
       <div
         style={{
