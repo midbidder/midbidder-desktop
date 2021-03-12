@@ -8,13 +8,22 @@ export default function Play() {
     <div
       style={{
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
       }}
     >
-      <BidQuantityForm />
-      <BidChoiceForm />
-      <TimeSlider />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "80%",
+        }}
+      >
+        <BidQuantityForm />
+        <BidChoiceForm />
+        <TimeSlider />
+      </div>
     </div>
   );
 }

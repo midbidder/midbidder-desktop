@@ -543,7 +543,7 @@ export function BidChoiceForm() {
   return (
     <div
       style={{
-        width: "60%",
+        width: "100%",
         display: "flex",
         justifyContent: "center",
         flexDirection: "column",
