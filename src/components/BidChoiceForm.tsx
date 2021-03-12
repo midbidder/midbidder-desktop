@@ -547,6 +547,7 @@ export function BidChoiceForm() {
         display: "flex",
         justifyContent: "center",
         flexDirection: "column",
+        alignItems: "center",
       }}
     >
       <TitleText size="s" underline>
