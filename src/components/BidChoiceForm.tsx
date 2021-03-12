@@ -342,106 +342,116 @@ function BidChoiceGraph() {
   };
 
   return (
-    <div style={{ width: "100%", height: "100%", userSelect: "none" }}>
-      <ContainerDimensions>
-        {({ width, height }) => {
-          return (
-            <div className="highlight-bar-charts">
-              <LineChart
-                data={data}
-                width={width}
-                height={height}
-                onMouseDown={(e: any) => {
-                  if (!e) return;
-                  const newState = cloneDeep(graphState);
-                  newState.leftBorder = e.activeLabel;
-                  setGraphState(newState);
-                }}
-                onMouseMove={(e: any) => {
-                  if (!e) return;
-                  if (graphState.leftBorder) {
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        userSelect: "none",
+        flexDirection: "column",
+      }}
+    >
+      <div style={{ width: "100%" }}>
+        <ContainerDimensions>
+          {({ width, height }) => {
+            return (
+              <div className="highlight-bar-charts">
+                <LineChart
+                  data={data}
+                  width={width}
+                  height={300}
+                  onMouseDown={(e: any) => {
+                    if (!e) return;
                     const newState = cloneDeep(graphState);
-                    newState.rightBorder = e.activeLabel;
+                    newState.leftBorder = e.activeLabel;
                     setGraphState(newState);
-                  }
-                }}
-                onMouseUp={() => {
-                  zoom();
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  allowDataOverflow
-                  dataKey="x"
-                  type="number"
-                  domain={[graphState.left, graphState.right]}
-                  stroke={"#0"}
-                  tickFormatter={(value: any) => {
-                    const tickValue = value as number;
-                    const roundTickValue = Math.round(tickValue);
-                    if (
-                      Math.abs(tickValue - roundTickValue) <= roundingPrecision
-                    ) {
-                      return `${roundTickValue}`;
+                  }}
+                  onMouseMove={(e: any) => {
+                    if (!e) return;
+                    if (graphState.leftBorder) {
+                      const newState = cloneDeep(graphState);
+                      newState.rightBorder = e.activeLabel;
+                      setGraphState(newState);
                     }
-                    return tickValue.toFixed(2);
                   }}
-                  xAxisId="choiceScale"
-                />
+                  onMouseUp={() => {
+                    zoom();
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    allowDataOverflow
+                    dataKey="x"
+                    type="number"
+                    domain={[graphState.left, graphState.right]}
+                    stroke={"#0"}
+                    tickFormatter={(value: any) => {
+                      const tickValue = value as number;
+                      const roundTickValue = Math.round(tickValue);
+                      if (
+                        Math.abs(tickValue - roundTickValue) <=
+                        roundingPrecision
+                      ) {
+                        return `${roundTickValue}`;
+                      }
+                      return tickValue.toFixed(2);
+                    }}
+                    xAxisId="choiceScale"
+                  />
 
-                <YAxis
-                  allowDataOverflow
-                  type="number"
-                  domain={[graphState.bottom, graphState.top]}
-                  stroke={"#0"}
-                  yAxisId="1"
-                  dataKey={"freq"}
-                  tickFormatter={(value: any) => {
-                    return (value as number).toFixed(2);
-                  }}
-                />
-                <Tooltip
-                  formatter={(value: any) => {
-                    return (value as number).toFixed(3);
-                  }}
-                  labelFormatter={(label) => {
-                    return (label as number).toFixed(3);
-                  }}
-                />
-                <Line
-                  type="stepAfter"
-                  dataKey={"freq"}
-                  stroke={blue}
-                  animationDuration={500}
-                  yAxisId="1"
-                  xAxisId="choiceScale"
-                />
-                {graphStatistics.map((dataStat: StatisticHighlight) => {
-                  return dataStat.enable
-                    ? StatFeature(
-                        dataStat,
-                        graphState.left,
-                        graphState.right,
-                        data
-                      )
-                    : undefined;
-                })}
-                {graphState.leftBorder && graphState.rightBorder ? (
-                  <ReferenceArea
+                  <YAxis
+                    allowDataOverflow
+                    type="number"
+                    domain={[graphState.bottom, graphState.top]}
+                    stroke={"#0"}
+                    yAxisId="1"
+                    dataKey={"freq"}
+                    tickFormatter={(value: any) => {
+                      return (value as number).toFixed(2);
+                    }}
+                  />
+                  <Tooltip
+                    formatter={(value: any) => {
+                      return (value as number).toFixed(3);
+                    }}
+                    labelFormatter={(label) => {
+                      return (label as number).toFixed(3);
+                    }}
+                  />
+                  <Line
+                    type="stepAfter"
+                    dataKey={"freq"}
+                    stroke={blue}
+                    animationDuration={500}
                     yAxisId="1"
                     xAxisId="choiceScale"
-                    x1={graphState.leftBorder}
-                    x2={graphState.rightBorder}
-                    strokeOpacity={0.7}
-                    stroke={purple}
-                    fill={blue}
                   />
-                ) : null}
-              </LineChart>
-            </div>
-          );
-        }}
-      </ContainerDimensions>
+                  {graphStatistics.map((dataStat: StatisticHighlight) => {
+                    return dataStat.enable
+                      ? StatFeature(
+                          dataStat,
+                          graphState.left,
+                          graphState.right,
+                          data
+                        )
+                      : undefined;
+                  })}
+                  {graphState.leftBorder && graphState.rightBorder ? (
+                    <ReferenceArea
+                      yAxisId="1"
+                      xAxisId="choiceScale"
+                      x1={graphState.leftBorder}
+                      x2={graphState.rightBorder}
+                      strokeOpacity={0.7}
+                      stroke={purple}
+                      fill={blue}
+                    />
+                  ) : null}
+                </LineChart>
+              </div>
+            );
+          }}
+        </ContainerDimensions>
+      </div>
       <div
         style={{
           width: "100%",
@@ -485,13 +495,13 @@ function BidChoiceGraph() {
       </div>
       <div
         style={{
-          maxHeight: configExpanded ? "100%" : "0%",
+          maxHeight: configExpanded ? 200 : 0,
           overflow: "hidden",
           transition: "0.5s",
         }}
       >
         <BodyText>graph configuration</BodyText>
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", overflow: "auto" }}>
           {graphStatistics.map(
             (graphStatistic: StatisticHighlight, settingIndex: number) => (
               <Chip
@@ -534,20 +544,14 @@ export function BidChoiceForm() {
     <div
       style={{
         width: "60%",
-        height: 300,
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "column",
       }}
     >
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <TitleText size="s" underline>
-          select bid choice
-        </TitleText>
-      </div>
+      <TitleText size="s" underline>
+        select bid choice
+      </TitleText>
       <BidChoiceGraph />
     </div>
   );

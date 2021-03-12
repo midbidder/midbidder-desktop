@@ -1,6 +1,7 @@
 import React from "react";
 import BidQuantityForm from "../components/BidQuantityForm";
 import { BidChoiceForm } from "../components/BidChoiceForm";
+import TimeSlider from "../components/TimeSlider";
 export default function Play() {
   return (
     // TODO: Responsive Masonry...
@@ -13,6 +14,7 @@ export default function Play() {
     >
       <BidQuantityForm />
       <BidChoiceForm />
+      <TimeSlider />
     </div>
   );
 }
