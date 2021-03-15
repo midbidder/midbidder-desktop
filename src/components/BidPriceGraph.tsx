@@ -131,7 +131,7 @@ export default function BidPriceGraph(props: {
                           color={purple}
                         >{`${props.timepoint}`}</BodyText>
 
-                        <BodyText size="xs" color={blue}>{`${
+                        <BodyText size="xs" color={blue}>{`$${
                           data[props.timepoint].price
                         }`}</BodyText>
                       </div>
