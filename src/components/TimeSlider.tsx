@@ -2,9 +2,11 @@ import { Slider, Tooltip, withStyles } from "@material-ui/core";
 import { blue, bodyFont, bodyFontWeight, purple } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 
+const axisMargin = 60;
+
 const StyledSlider = withStyles({
   root: {
-    color: blue,
+    color: purple,
     height: 3,
     padding: "13px 0",
   },
@@ -49,7 +51,10 @@ const StyledSlider = withStyles({
   },
 })(Slider);
 
-export default function TimeSlider() {
+export default function TimeSlider(props: {
+  timepoint: number;
+  setTimepoint: (newTimepoint: number) => void;
+}) {
   return (
     <div
       style={{
@@ -58,6 +63,7 @@ export default function TimeSlider() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        paddingLeft: axisMargin,
       }}
     >
       <TitleText size="s" underline>
@@ -69,8 +75,11 @@ export default function TimeSlider() {
         max={10}
         step={1}
         marks
-        defaultValue={10}
+        defaultValue={props.timepoint}
         style={{ marginBottom: 20 }}
+        onChange={(event, value) => {
+          props.setTimepoint(value as number);
+        }}
       />
       <div
         style={{

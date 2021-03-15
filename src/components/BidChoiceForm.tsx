@@ -356,6 +356,7 @@ function BidChoiceGraph() {
             return (
               <div className="highlight-bar-charts">
                 <LineChart
+                  margin={{ left: 0, top: 0, right: 0, bottom: 0 }}
                   data={data}
                   width={width}
                   height={300}
