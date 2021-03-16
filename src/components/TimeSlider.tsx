@@ -2,8 +2,6 @@ import { Slider, Tooltip, withStyles } from "@material-ui/core";
 import { blue, bodyFont, bodyFontWeight, purple } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 
-const axisMargin = 60;
-
 const StyledSlider = withStyles({
   root: {
     color: purple,
@@ -63,7 +61,6 @@ export default function TimeSlider(props: {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        paddingLeft: axisMargin,
       }}
     >
       <TitleText size="s" underline>

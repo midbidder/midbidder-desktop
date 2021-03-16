@@ -15,28 +15,36 @@ import {
 } from "recharts";
 import ContainerDimensions from "react-container-dimensions";
 import { propTypes } from "react-bootstrap/esm/Image";
-
+// @ts-ignore
+import commaNumber from "comma-number";
 const roundingPrecision = 0.0001;
 const axisMargin = 60;
 
 const data = [
-  { x: 0, price: 0.05 },
-  { x: 1, price: 0.025 },
-  { x: 2, price: 0.15 },
-  { x: 3, price: 0.225 },
-  { x: 4, price: 0.265 },
-  { x: 5, price: 0.35 },
-  { x: 6, price: 0.45 },
-  { x: 7, price: 0.625 },
-  { x: 8, price: 0.75 },
-  { x: 9, price: 0.825 },
-  { x: 10, price: 0.965 },
+  { x: 0, volume: 300000 },
+  { x: 1, volume: 8300000 },
+  { x: 2, volume: 8800000 },
+  { x: 3, volume: 9300000 },
+  { x: 4, volume: 20000001 },
+  { x: 5, volume: 50002058 },
+  { x: 6, volume: 700050005 },
+  { x: 7, volume: 120095869 },
+  { x: 8, volume: 2000000000 },
+  { x: 9, volume: 5020187961 },
+  { x: 10, volume: 9899950545 },
 ];
 
 export default function BidPriceGraph(props: {
   timepoint: number;
   setTimepoint: (newTimepoint: number) => void;
 }) {
+  let maxVolume = -1;
+  data.forEach((datum) => {
+    if (datum.volume > maxVolume) {
+      maxVolume = datum.volume;
+    }
+  });
+  const side = 1 === Math.round(props.timepoint / 10) ? "left" : "right";
   return (
     <div
       style={{
@@ -47,7 +55,7 @@ export default function BidPriceGraph(props: {
       }}
     >
       <TitleText underline size="s">
-        bid price over time
+        bid volume over time
       </TitleText>
       <div style={{ width: "100%", userSelect: "none" }}>
         <ContainerDimensions>
@@ -62,7 +70,7 @@ export default function BidPriceGraph(props: {
                 >
                   <ReferenceLine
                     x={props.timepoint}
-                    yAxisId={"price"}
+                    yAxisId={"volume"}
                     xAxisId={"timeScale"}
                     strokeWidth={3}
                     stroke={purple}
@@ -92,15 +100,11 @@ export default function BidPriceGraph(props: {
                     allowDataOverflow
                     type="number"
                     stroke={"#0"}
-                    yAxisId="price"
-                    dataKey={"price"}
-                    mirror
-                    orientation={
-                      Math.round(props.timepoint / 10) === 1 ? "left" : "right"
-                    }
-                    tickFormatter={(value: any) => {
-                      return value === 0 ? "" : (value as number).toFixed(2);
-                    }}
+                    yAxisId="volume"
+                    dataKey={"volume"}
+                    tickFormatter={(value) => value === 0 ? "" : commaNumber(value)}
+                    mirror={true}
+                    orientation={side}
                   />
 
                   <Tooltip
@@ -108,10 +112,11 @@ export default function BidPriceGraph(props: {
                       visibility: "visible",
                     }}
                     position={{
-                      x:
-                        ((width - axisMargin) * props.timepoint) / 10,
+                      x: ((width - axisMargin) * props.timepoint) / 10,
                       y:
-                        Math.round(1 - data[props.timepoint].price) === 1
+                        Math.round(
+                          1 - data[props.timepoint].volume / maxVolume
+                        ) === 1
                           ? 10
                           : 200,
                     }}
@@ -134,26 +139,18 @@ export default function BidPriceGraph(props: {
                           color={purple}
                         >{`${props.timepoint}`}</BodyText>
 
-                        <BodyText size="xs" color={blue}>{`$${
-                          data[props.timepoint].price
-                        }`}</BodyText>
+                        <BodyText size="xs" color={blue}>{`${commaNumber(
+                          data[props.timepoint].volume
+                        )} bids`}</BodyText>
                       </div>
                     }
                   />
-                  <Tooltip
-                    formatter={(value: any) => {
-                      return `$${(value as number).toFixed(3)}`;
-                    }}
-                    labelFormatter={(label) => {
-                      return `time point ${label}`;
-                    }}
-                  />
                   <Line
                     type="linear"
-                    dataKey={"price"}
+                    dataKey={"volume"}
                     stroke={blue}
                     animationDuration={500}
-                    yAxisId="price"
+                    yAxisId="volume"
                     xAxisId="timeScale"
                   />
                 </LineChart>

@@ -13,6 +13,7 @@
     "@types/react": "^16.14.2",
     "@types/react-dom": "^16.9.10",
     "bootstrap": "^4.6.0",
+    "comma-number": "^2.0.1",
     "d3-array": "^2.11.0",
     "d3-time-format": "^3.0.0",
     "dotenv": "^8.2.0",
