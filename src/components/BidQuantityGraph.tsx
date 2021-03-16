@@ -21,27 +21,27 @@ const roundingPrecision = 0.0001;
 const axisMargin = 60;
 
 const data = [
-  { x: 0, volume: 300000 },
-  { x: 1, volume: 8300000 },
-  { x: 2, volume: 8800000 },
-  { x: 3, volume: 9300000 },
-  { x: 4, volume: 20000001 },
-  { x: 5, volume: 50002058 },
-  { x: 6, volume: 700050005 },
-  { x: 7, volume: 120095869 },
-  { x: 8, volume: 2000000000 },
-  { x: 9, volume: 5020187961 },
-  { x: 10, volume: 9899950545 },
+  { x: 0, quantity: 300000 },
+  { x: 1, quantity: 8300000 },
+  { x: 2, quantity: 8800000 },
+  { x: 3, quantity: 9300000 },
+  { x: 4, quantity: 20000001 },
+  { x: 5, quantity: 50002058 },
+  { x: 6, quantity: 700050005 },
+  { x: 7, quantity: 120095869 },
+  { x: 8, quantity: 2000000000 },
+  { x: 9, quantity: 5020187961 },
+  { x: 10, quantity: 9899950545 },
 ];
 
 export default function BidPriceGraph(props: {
   timepoint: number;
   setTimepoint: (newTimepoint: number) => void;
 }) {
-  let maxVolume = -1;
+  let maxquantity = -1;
   data.forEach((datum) => {
-    if (datum.volume > maxVolume) {
-      maxVolume = datum.volume;
+    if (datum.quantity > maxquantity) {
+      maxquantity = datum.quantity;
     }
   });
   const side = 1 === Math.round(props.timepoint / 10) ? "left" : "right";
@@ -55,7 +55,7 @@ export default function BidPriceGraph(props: {
       }}
     >
       <TitleText underline size="s">
-        bid volume over time
+        bid quantity over time
       </TitleText>
       <div style={{ width: "100%", userSelect: "none" }}>
         <ContainerDimensions>
@@ -70,7 +70,7 @@ export default function BidPriceGraph(props: {
                 >
                   <ReferenceLine
                     x={props.timepoint}
-                    yAxisId={"volume"}
+                    yAxisId={"quantity"}
                     xAxisId={"timeScale"}
                     strokeWidth={3}
                     stroke={purple}
@@ -100,8 +100,8 @@ export default function BidPriceGraph(props: {
                     allowDataOverflow
                     type="number"
                     stroke={"#0"}
-                    yAxisId="volume"
-                    dataKey={"volume"}
+                    yAxisId="quantity"
+                    dataKey={"quantity"}
                     tickFormatter={(value) => value === 0 ? "" : commaNumber(value)}
                     mirror={true}
                     orientation={side}
@@ -115,7 +115,7 @@ export default function BidPriceGraph(props: {
                       x: ((width - axisMargin) * props.timepoint) / 10,
                       y:
                         Math.round(
-                          1 - data[props.timepoint].volume / maxVolume
+                          1 - data[props.timepoint].quantity / maxquantity
                         ) === 1
                           ? 10
                           : 200,
@@ -140,17 +140,17 @@ export default function BidPriceGraph(props: {
                         >{`${props.timepoint}`}</BodyText>
 
                         <BodyText size="xs" color={blue}>{`${commaNumber(
-                          data[props.timepoint].volume
+                          data[props.timepoint].quantity
                         )} bids`}</BodyText>
                       </div>
                     }
                   />
                   <Line
                     type="linear"
-                    dataKey={"volume"}
+                    dataKey={"quantity"}
                     stroke={blue}
                     animationDuration={500}
-                    yAxisId="volume"
+                    yAxisId="quantity"
                     xAxisId="timeScale"
                   />
                 </LineChart>
