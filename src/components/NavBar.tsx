@@ -1,8 +1,7 @@
 import { Button } from "@material-ui/core";
-import React, { useContext } from "react";
-import { DropdownButton, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { AuthContext } from "../contexts/AuthContext";
-import { blue, purple } from "../styles/GlobalStyles";
+import React from "react";
+import { Nav, Navbar } from "react-bootstrap";
+import { blue, purple, black } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 export interface SiteMapping {
   title: string;
@@ -17,7 +16,7 @@ export interface NavBarProps {
 }
 
 export default function NavBar(props: NavBarProps) {
-  // const auth = useContext(AuthContext);
+  // TODO: const auth = useContext(AuthContext);
   return (
     <Navbar style={{ backgroundColor: purple }} expand="lg">
       <Navbar.Brand href="/">
@@ -65,7 +64,7 @@ export default function NavBar(props: NavBarProps) {
                 style={{
                   textTransform: "none",
                   backgroundColor: purple,
-                  color: "#000",
+                  color: black,
                 }}
                 href={tabSetting.route}
               >

@@ -1,20 +1,16 @@
-import React, { useState } from "react";
-import { blue, bodyFont, purple } from "../styles/GlobalStyles";
+import React from "react";
+import { blue, purple, black } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
-import { cloneDeep } from "lodash";
 import {
   LineChart,
   Line,
   XAxis,
   CartesianGrid,
-  ReferenceArea,
   YAxis,
   Tooltip,
   ReferenceLine,
-  ReferenceDot,
 } from "recharts";
 import ContainerDimensions from "react-container-dimensions";
-import { propTypes } from "react-bootstrap/esm/Image";
 
 const roundingPrecision = 0.0001;
 const axisMargin = 60;
@@ -73,7 +69,7 @@ export default function BidPriceGraph(props: {
                     dataKey="x"
                     type="number"
                     domain={[0, 10]}
-                    stroke={"#0"}
+                    stroke={black}
                     tickFormatter={(value: any) => {
                       const tickValue = value as number;
                       const roundTickValue = Math.round(tickValue);
@@ -91,7 +87,7 @@ export default function BidPriceGraph(props: {
                   <YAxis
                     allowDataOverflow
                     type="number"
-                    stroke={"#0"}
+                    stroke={black}
                     yAxisId="price"
                     dataKey={"price"}
                     mirror

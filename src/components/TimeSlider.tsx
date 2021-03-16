@@ -1,5 +1,5 @@
-import { Slider, Tooltip, withStyles } from "@material-ui/core";
-import { blue, bodyFont, bodyFontWeight, purple } from "../styles/GlobalStyles";
+import { Slider, withStyles } from "@material-ui/core";
+import { black, bodyFont, bodyFontWeight, purple } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 
 const StyledSlider = withStyles({
@@ -33,7 +33,7 @@ const StyledSlider = withStyles({
     height: 3,
   },
   rail: {
-    color: "#000",
+    color: black,
     opacity: 0.3,
     height: 3,
   },
@@ -42,7 +42,7 @@ const StyledSlider = withStyles({
     top: 30,
     "& *": {
       background: "transparent",
-      color: "#000",
+      color: black,
     },
     fontFamily: bodyFont,
     fontWeight: bodyFontWeight,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { blue, purple } from "../styles/GlobalStyles";
+import { blue, purple, black } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 import { cloneDeep } from "lodash";
 import {
@@ -384,7 +384,7 @@ function BidChoiceGraph() {
                     dataKey="x"
                     type="number"
                     domain={[graphState.left, graphState.right]}
-                    stroke={"#0"}
+                    stroke={black}
                     tickFormatter={(value: any) => {
                       const tickValue = value as number;
                       const roundTickValue = Math.round(tickValue);
@@ -403,7 +403,7 @@ function BidChoiceGraph() {
                     allowDataOverflow
                     type="number"
                     domain={[graphState.bottom, graphState.top]}
-                    stroke={"#0"}
+                    stroke={black}
                     yAxisId="1"
                     dataKey={"freq"}
                     tickFormatter={(value: any) => {
