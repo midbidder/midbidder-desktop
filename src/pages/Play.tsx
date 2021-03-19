@@ -4,6 +4,7 @@ import { BidChoiceForm } from "../components/BidChoiceForm";
 import TimeSlider from "../components/TimeSlider";
 import BidPriceGraph from "../components/BidPriceGraph";
 import BidQuantityGraph from "../components/BidQuantityGraph";
+import BidMedianGraph from "../components/BidMedianGraph";
 export default function Play() {
   const [ timepoint, setTimepoint] = useState(10);
 
@@ -27,6 +28,7 @@ export default function Play() {
         <BidQuantityForm />
         <BidChoiceForm />
         <TimeSlider setTimepoint={(newTimepoint: number) => setTimepoint(newTimepoint)} timepoint={timepoint}/>
+        <BidMedianGraph setTimepoint={(newTimepoint: number) => setTimepoint(newTimepoint)} timepoint={timepoint}/>
         <BidPriceGraph setTimepoint={(newTimepoint: number) => setTimepoint(newTimepoint)} timepoint={timepoint}/>
         <BidQuantityGraph setTimepoint={(newTimepoint: number) => setTimepoint(newTimepoint)} timepoint={timepoint}/>
       </div>
