@@ -1,6 +1,6 @@
 import React from "react";
 import ChangeUserNameForm from "../components/ChangeUserNameForm";
-import { BodyText, TitleText } from "../components/Text";
+import { TitleText } from "../components/Text";
 import { blue } from "../styles/GlobalStyles";
 
 export default function Settings() {

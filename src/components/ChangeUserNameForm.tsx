@@ -7,7 +7,6 @@ import {
   blue,
   bodyFont,
   bodyFontWeight,
-  purple,
 } from "../styles/GlobalStyles";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
