@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   GoogleLogin,
   GoogleLoginResponse,
@@ -9,8 +9,11 @@ import { styleLoginButton } from "../styles/SignInStyles";
 import { BodyText, TitleText } from "../components/Text";
 import Button from "@material-ui/core/Button";
 import { blue } from "../styles/GlobalStyles";
+import { AuthContext, AuthSchema } from "../contexts/AuthContext";
+import { Redirect } from "react-router-dom";
 
-function SignInButton(signInProps: { signUp?: boolean | undefined }) {
+function SignInButton() {
+  const auth: AuthSchema = useContext(AuthContext);
   const successCallback = (
     response: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => {
@@ -18,10 +21,14 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
       ? (response as GoogleLoginResponse).tokenId
       : undefined;
     // TODO: database stuff here. Check if account exists. If not, create account.
+    auth.signIn && auth.signIn();
   };
   const failureCallback = (response: GoogleLoginResponse) => {
+    auth.signOut && auth.signOut();
   };
-  return (
+  return auth.signedIn ? (
+    <Redirect to="/play" />
+  ) : (
     <div>
       <GoogleLogin
         // For custom login, make a render attribute
@@ -35,7 +42,7 @@ function SignInButton(signInProps: { signUp?: boolean | undefined }) {
               disabled={buttonProps.disabled}
               style={styleLoginButton}
             >
-              {signInProps.signUp ? "sign up" : "sign in"} with google
+              {auth.signedIn ? "sign up" : "sign in"} with google
             </Button>
           );
         }}
@@ -108,7 +115,7 @@ export function SignUp() {
           </TitleText>
           <TitleText size="m">gn up</TitleText>
         </span>
-        <SignInButton signUp={true} />
+        <SignInButton />
         <div style={{ height: 50 }} />
         <div>
           <BodyText italics size="s" underline>

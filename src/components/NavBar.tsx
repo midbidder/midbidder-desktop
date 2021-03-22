@@ -1,22 +1,24 @@
 import { Button } from "@material-ui/core";
-import React from "react";
+import React, { useContext } from "react";
 import { Nav, Navbar } from "react-bootstrap";
+import { AuthContext } from "../contexts/AuthContext";
 import { blue, purple, black } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 export interface SiteMapping {
   title: string;
-  route: string;
+  route: string | false;
   component: any;
   exact?: boolean;
   tab: boolean;
 }
 
 export interface NavBarProps {
-  siteMap: SiteMapping[];
+  siteMap: Map<string, SiteMapping>;
 }
 
 export default function NavBar(props: NavBarProps) {
-  // TODO: const auth = useContext(AuthContext);
+  const auth = useContext(AuthContext);
+  const signedIn: boolean = auth.signedIn;
   return (
     <Navbar style={{ backgroundColor: purple }} expand="lg">
       <Navbar.Brand href="/">
@@ -35,42 +37,46 @@ export default function NavBar(props: NavBarProps) {
             justifyContent: "flex-end",
           }}
         >
-          <Button
-            style={{
-              textTransform: "none",
-              backgroundColor: blue,
-              color: "#fff",
-            }}
-            href={"/signup"}
-          >
-            <BodyText>sign up</BodyText>
-          </Button>
-          <div style={{ width: 10, height: 10 }} />
-          <Button
-            style={{
-              textTransform: "none",
-              color: blue,
-              border: `1px solid ${blue}`,
-              backgroundColor: "transparent",
-            }}
-            href={"/signin"}
-          >
-            <BodyText>sign in</BodyText>
-          </Button>
-          {props.siteMap
-            .filter((tabSetting: SiteMapping) => tabSetting.tab)
-            .map((tabSetting: SiteMapping, index: number) => (
+          {!signedIn && (
+            <>
+              <Button
+                style={{
+                  textTransform: "none",
+                  backgroundColor: blue,
+                  color: "#fff",
+                }}
+                href={"/signup"}
+              >
+                <BodyText>sign up</BodyText>
+              </Button>
+              <div style={{ width: 10, height: 10 }} />
+              <Button
+                style={{
+                  textTransform: "none",
+                  color: blue,
+                  border: `1px solid ${blue}`,
+                  backgroundColor: "transparent",
+                }}
+                href={"/signin"}
+              >
+                <BodyText>sign in</BodyText>
+              </Button>
+            </>
+          )}
+          {Array.from(props.siteMap.values()).map((mapping: SiteMapping) =>
+            mapping.tab ? (
               <Button
                 style={{
                   textTransform: "none",
                   backgroundColor: purple,
                   color: black,
                 }}
-                href={tabSetting.route}
+                href={mapping.route || "/"}
               >
-                <BodyText>{tabSetting.title}</BodyText>
+                <BodyText>{mapping.title}</BodyText>
               </Button>
-            ))}
+            ) : undefined
+          )}
         </Nav>
       </Navbar.Collapse>
     </Navbar>
