@@ -5,6 +5,8 @@ import TimeSlider from "../components/TimeSlider";
 import BidPriceGraph from "../components/BidPriceGraph";
 import BidQuantityGraph from "../components/BidQuantityGraph";
 import BidMedianGraph from "../components/BidMedianGraph";
+import { TitleText } from "../components/Text";
+import { blue } from "../styles/GlobalStyles";
 export default function Play() {
   const [ timepoint, setTimepoint] = useState(10);
 
@@ -25,6 +27,7 @@ export default function Play() {
           width: "80%",
         }}
       >
+        <div><TitleText>play</TitleText><TitleText color={blue}>!</TitleText></div>
         <BidQuantityForm />
         <BidChoiceForm />
         <TimeSlider setTimepoint={(newTimepoint: number) => setTimepoint(newTimepoint)} timepoint={timepoint}/>

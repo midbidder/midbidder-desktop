@@ -1,6 +1,24 @@
+import { Title } from "@material-ui/icons";
 import React from "react";
 import { TitleText } from "../components/Text";
+import { blue } from "../styles/GlobalStyles";
 
 export default function Tutorial() {
-  return <TitleText>Tutorial</TitleText>;
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <div>
+        <TitleText>tutor</TitleText>
+        <TitleText color={blue}>i</TitleText>
+        <TitleText>al</TitleText>
+      </div>
+    </div>
+  );
 }
