@@ -1,5 +1,6 @@
 import React from "react";
-import { TitleText } from "../components/Text";
+import ChangeUserNameForm from "../components/ChangeUserNameForm";
+import { BodyText, TitleText } from "../components/Text";
 import { blue } from "../styles/GlobalStyles";
 
 export default function Settings() {
@@ -23,7 +24,9 @@ export default function Settings() {
       <TitleText size="m" underline>
         username
       </TitleText>
-      <div>change username</div>
+      <div>
+        <ChangeUserNameForm />
+      </div>
       <TitleText size="m" underline>
         password
       </TitleText>
