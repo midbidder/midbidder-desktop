@@ -6,7 +6,7 @@ import {
   Dropdown,
   ButtonGroup,
 } from "react-bootstrap";
-import { blue, bodyFont, bodyFontWeight, titleFont } from "../styles/GlobalStyles";
+import { blue, bodyFont, bodyFontWeight } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 import { BidSlider } from "./BidSlider";
 import { Button, TextField } from "@material-ui/core/";
