@@ -1,7 +1,7 @@
 import { Button } from "@material-ui/core";
 import React, { useContext } from "react";
 import { Nav, Navbar } from "react-bootstrap";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext, AuthSchema } from "../contexts/AuthContext";
 import { blue, purple, black } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 export interface SiteMapping {
@@ -17,7 +17,7 @@ export interface NavBarProps {
 }
 
 export default function NavBar(props: NavBarProps) {
-  const auth = useContext(AuthContext);
+  const auth: AuthSchema = useContext(AuthContext);
   const signedIn: boolean = auth.signedIn;
   return (
     <Navbar style={{ backgroundColor: purple }} expand="lg">

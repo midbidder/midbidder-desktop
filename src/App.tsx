@@ -56,11 +56,14 @@ const mapEntries: [string, SiteMapping][] = [
 export const siteMap: Map<string, SiteMapping> = new Map(mapEntries);
 
 export default function App() {
-  const [authState, setAuthState] = useState(AuthContextSignedOut);
+  const cookiesSignedIn: boolean = localStorage.getItem('loggedIn') === 'true';
+  const [authState, setAuthState] = useState(cookiesSignedIn ? AuthContextSignedIn : AuthContextSignedOut);
   const authSignOut = () => {
+    localStorage.clear();
     setAuthState(AuthContextSignedOut);
   };
   const authSignIn = () => {
+    localStorage.setItem('loggedIn', 'true');
     setAuthState(AuthContextSignedIn);
   };
   if (!authState.signOut) {
