@@ -79,7 +79,6 @@ export default function ChangeUserNameForm() {
     <div>
       <FormControl className={usernameClasses.root}>
         <NameTextField
-          id="standard-basic"
           label="change username"
           helperText={invalid ? "that username is taken or invalid" : done ? "username changed!" : "enter a username"}
           InputLabelProps={{
