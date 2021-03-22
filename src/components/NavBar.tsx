@@ -37,7 +37,21 @@ export default function NavBar(props: NavBarProps) {
             justifyContent: "flex-end",
           }}
         >
-          {!signedIn && (
+          {signedIn ? (
+            <Button
+              style={{
+                textTransform: "none",
+                backgroundColor: blue,
+                color: "#fff",
+              }}
+              onClick={() => {
+                auth.signOut && auth.signOut();
+              }}
+              href={"/signout"}
+            >
+              <BodyText>sign out</BodyText>
+            </Button>
+          ) : (
             <>
               <Button
                 style={{

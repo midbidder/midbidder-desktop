@@ -37,6 +37,14 @@ export default function Settings() {
         bio
       </TitleText>
       <div>change bio</div>
+      <TitleText size="m" underline>
+        billing
+      </TitleText>
+      <div>change payment method</div>
+      <TitleText size="m" underline>
+        notifications
+      </TitleText>
+      <div>change email notifications</div>
     </div>
   );
 }

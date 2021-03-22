@@ -12,6 +12,7 @@ import {
   AuthSchema,
 } from "./contexts/AuthContext";
 import Play from "./pages/Play";
+import SignOut from "./pages/SignOut";
 
 const mapEntries: [string, SiteMapping][] = [
   {
@@ -49,6 +50,12 @@ const mapEntries: [string, SiteMapping][] = [
     title: "signup",
     route: "/signup",
     component: <SignUp />,
+    tab: false,
+  },
+  {
+    title: "signout",
+    route: "/signout",
+    component: <SignOut />,
     tab: false,
   },
 ].map((mapEntry) => [mapEntry.title, mapEntry]);
