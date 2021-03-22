@@ -15,9 +15,28 @@ export default function Settings() {
     >
       <div>
         <TitleText>sett</TitleText>
-        <TitleText color={blue}>i</TitleText>
+        <TitleText color={blue} opacity={"spring"}>
+          i
+        </TitleText>
         <TitleText>ngs</TitleText>
       </div>
+      <TitleText size="m" underline>
+        username
+      </TitleText>
+      <div>change username</div>
+      <TitleText size="m" underline>
+        password
+      </TitleText>
+      <div>
+        <div>old password</div>
+        <div>new password</div>
+        <div>new password (x2)</div>
+      </div>
+
+      <TitleText size="m" underline>
+        bio
+      </TitleText>
+      <div>change bio</div>
     </div>
   );
 }

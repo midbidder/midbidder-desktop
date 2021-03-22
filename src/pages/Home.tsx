@@ -15,7 +15,13 @@ export default function Home() {
       }}
     >
       <div>
-        <TitleText underline>home</TitleText>
+        <TitleText color={blue} opacity="spring">
+          ~
+        </TitleText>
+        <TitleText>home</TitleText>
+        <TitleText color={blue} opacity="spring">
+          ~
+        </TitleText>
       </div>
       <div>
         <PlayButton />

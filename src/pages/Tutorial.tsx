@@ -16,7 +16,7 @@ export default function Tutorial() {
     >
       <div>
         <TitleText>tutor</TitleText>
-        <TitleText color={blue}>i</TitleText>
+        <TitleText color={blue} opacity={"spring"}>i</TitleText>
         <TitleText>al</TitleText>
       </div>
     </div>

@@ -27,7 +27,7 @@ export default function Play() {
           width: "80%",
         }}
       >
-        <div><TitleText>play</TitleText><TitleText color={blue}>!</TitleText></div>
+        <div><TitleText>play</TitleText><TitleText color={blue} opacity="spring">!</TitleText></div>
         <BidQuantityForm />
         <BidChoiceForm />
         <TimeSlider setTimepoint={(newTimepoint: number) => setTimepoint(newTimepoint)} timepoint={timepoint}/>

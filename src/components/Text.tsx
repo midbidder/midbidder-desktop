@@ -6,7 +6,7 @@ import {
   titleFontWeight,
   blue,
 } from "../styles/GlobalStyles";
-
+import "../styles/TextStyles.css";
 /**
  * @param children text within.
  * @param italics whether text is italic
@@ -22,6 +22,7 @@ interface TextProps {
   href?: string;
   newTab?: boolean;
   color?: string;
+  opacity?: number | "spring";
 }
 
 /**
@@ -43,6 +44,7 @@ export function BodyText(props: TextProps) {
   } else {
     fontSize = size;
   }
+  let textOpacity = 1;
   return (
     <span
       style={{
@@ -52,7 +54,9 @@ export function BodyText(props: TextProps) {
         fontWeight: bodyFontWeight,
         textDecoration: props.underline ? "underline" : undefined,
         color: props.color,
+        opacity: props.opacity === "spring" ? undefined : textOpacity,
       }}
+      className={props.opacity === "spring" ? "springOpacity" : undefined}
     >
       {props.href ? (
         <a
@@ -87,6 +91,10 @@ export function TitleText(props: TextProps) {
   } else {
     fontSize = size;
   }
+  let textOpacity = 1;
+  if (props.opacity === "spring") {
+    textOpacity = 1;
+  }
   return (
     <span
       style={{
@@ -96,7 +104,9 @@ export function TitleText(props: TextProps) {
         fontWeight: titleFontWeight,
         textDecoration: props.underline ? "underline" : undefined,
         color: props.color,
+        opacity: props.opacity === "spring" ? undefined : textOpacity,
       }}
+      className={props.opacity === "spring" ? "springOpacity" : undefined}
     >
       {props.children}
     </span>
