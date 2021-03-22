@@ -1,4 +1,3 @@
-import { Title } from "@material-ui/icons";
 import React from "react";
 import { TitleText } from "../components/Text";
 import { blue } from "../styles/GlobalStyles";

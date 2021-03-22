@@ -6,7 +6,7 @@ import {
   Dropdown,
   ButtonGroup,
 } from "react-bootstrap";
-import { blue, bodyFont } from "../styles/GlobalStyles";
+import { blue, bodyFont, bodyFontWeight, titleFont } from "../styles/GlobalStyles";
 import { BodyText, TitleText } from "./Text";
 import { BidSlider } from "./BidSlider";
 import { Button, TextField } from "@material-ui/core/";
@@ -125,6 +125,9 @@ function BidTextInput(props: BidChildrenProps) {
       InputProps={{
         style: {
           height: "4em",
+          fontFamily: bodyFont,
+          fontWeight: bodyFontWeight,
+          fontSize: "1.2em"
         },
       }}
       inputProps={{ min: 0, style: { textAlign: "center" } }}
