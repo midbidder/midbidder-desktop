@@ -1,4 +1,5 @@
 import React from "react";
+import ChangePasswordForm from "../components/ChangePasswordForm";
 import ChangeUserNameForm from "../components/ChangeUserNameForm";
 import { TitleText } from "../components/Text";
 import { blue } from "../styles/GlobalStyles";
@@ -31,9 +32,7 @@ export default function Settings() {
         password
       </TitleText>
       <div>
-        <div>old password</div>
-        <div>new password</div>
-        <div>new password (x2)</div>
+        <ChangePasswordForm/>
       </div>
 
       <TitleText size="m" underline>

@@ -71,7 +71,7 @@ export default function ChangeUserNameForm() {
       onClick={() => setUsername("")}
     />
   );
-  const invalid = false;
+  const invalid = true;
   const done = true;
   const currentIcon = invalid ? invalidIcon : done ? doneIcon : notDoneIcon;
   return (
